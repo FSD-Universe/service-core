@@ -1,4 +1,6 @@
-// Package dto
+//go:build http
+// +build http
+
 package dto
 
 import "github.com/labstack/echo/v4"

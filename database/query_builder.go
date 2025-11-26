@@ -1,4 +1,6 @@
-// Package database 数据库操作基础仓库
+//go:build database
+// +build database
+
 package database
 
 import (

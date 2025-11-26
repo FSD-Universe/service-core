@@ -1,4 +1,6 @@
-// Package database
+//go:build database
+// +build database
+
 package database
 
 import (
