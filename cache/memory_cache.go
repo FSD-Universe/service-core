@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/cache"
-	"github.com/Flyleague-Collection/module-base-interface/utils"
+	"github.com/FSD-Universe/service-core/interfaces/cache"
+	"github.com/FSD-Universe/service-core/utils"
 )
 
 func isOutDate[T any](data *cache.CachedItem[T]) bool {

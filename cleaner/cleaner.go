@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/cleaner"
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/logger"
-	"github.com/Flyleague-Collection/module-base-interface/utils"
+	"github.com/FSD-Universe/service-core/interfaces/cleaner"
+	"github.com/FSD-Universe/service-core/interfaces/logger"
+	"github.com/FSD-Universe/service-core/utils"
 )
 
 type shutdownFunc struct {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/config"
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/global"
+	"github.com/FSD-Universe/service-core/interfaces/config"
+	"github.com/FSD-Universe/service-core/interfaces/global"
 	"gopkg.in/yaml.v3"
 )
 

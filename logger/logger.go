@@ -10,8 +10,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/config"
-	"github.com/Flyleague-Collection/module-base-interface/interfaces/global"
+	"github.com/FSD-Universe/service-core/interfaces/config"
+	"github.com/FSD-Universe/service-core/interfaces/global"
 	"github.com/fatih/color"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
