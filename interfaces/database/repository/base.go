@@ -1,3 +1,5 @@
+//go:build database
+
 // Package repository
 package repository
 

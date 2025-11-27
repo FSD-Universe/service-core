@@ -34,3 +34,13 @@ const (
 	EnvServiceTimeout    = "SERVICE_TIMEOUT"
 	EnvCleanupInterval   = "CLEANUP_INTERVAL"
 )
+
+func CheckFlags() {
+	flag.Parse()
+	CheckBoolEnv(EnvNoLogs, NoLogs)
+	CheckStringEnv(EnvConfigFilePath, ConfigFilePath)
+	CheckIntEnv(EnvBroadcastPort, BroadcastPort, 9999)
+	CheckDurationEnv(EnvHeartbeatInterval, HeartbeatInterval)
+	CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
+	CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
+}
