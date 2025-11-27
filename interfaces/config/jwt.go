@@ -1,3 +1,5 @@
+//go:build http && httpjwt
+
 // Package config
 package config
 

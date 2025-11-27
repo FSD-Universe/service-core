@@ -1,4 +1,4 @@
-//go:build httpjwt
+//go:build http && httpjwt
 
 package jwt
 
