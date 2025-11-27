@@ -1,6 +1,6 @@
 # ServiceCore
 
-![ProjectLanguageCard]![ProjectLicense]
+![ProjectLanguageCard]![ProjectLicense]![BuildStateCard]
 
 ## 介绍
 
@@ -36,3 +36,5 @@ Copyright © 2025 Half_nothing
 [ProjectLanguageCard]: https://img.shields.io/github/languages/top/FSD-Universe/service-core?style=for-the-badge&logo=github
 
 [ProjectLicense]: https://img.shields.io/badge/License-MIT-blue?style=for-the-badge&logo=github
+
+[BuildStateCard]: https://img.shields.io/github/actions/workflow/status/FSD-Universe/service-core/go-test.yml?style=for-the-badge&logo=github&label=UnitTests
