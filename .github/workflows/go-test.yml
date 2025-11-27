@@ -1,4 +1,4 @@
-name: Go-Build
+name: run unit tests
 
 on:
   push:
@@ -21,7 +21,6 @@ on:
   pull_request:
     branches:
       - "main"
-  workflow_dispatch:
 
 
 jobs:
@@ -34,9 +33,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.24'
-
-      - name: Build
-        run: go build -ldflags="-w -s" -tags "http" -o metar-service-linux .
 
       - name: Test
         run: go test ./...
