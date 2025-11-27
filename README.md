@@ -13,6 +13,12 @@ ServiceCore 是一个基于 Go 语言的框架，提供了服务框架，用于�
 - 缓存操作
 - Http响应封装
 
+## 使用
+
+```shell
+go get half-nothing.cn/service-core
+```
+
 ## 开源协议
 
 MIT License
