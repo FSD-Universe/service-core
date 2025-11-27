@@ -4,6 +4,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"reflect"
 
 	"gopkg.in/yaml.v3"
 	"half-nothing.cn/service-core/interfaces/config"
@@ -13,6 +14,13 @@ import (
 // readConfig 读取并解析配置文件
 func readConfig[T config.DefaultSetter]() (T, error) {
 	var c T
+	if reflect.ValueOf(c).Kind() == reflect.Pointer {
+		t := reflect.TypeOf(c)
+		if t.Elem().Kind() == reflect.Struct {
+			newValue := reflect.New(t.Elem())
+			c = newValue.Interface().(T)
+		}
+	}
 	c.InitDefaults()
 
 	file, err := os.OpenFile(*global.ConfigFilePath, os.O_RDONLY, global.DefaultFilePermissions)
