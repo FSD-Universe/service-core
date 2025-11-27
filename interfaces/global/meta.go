@@ -33,6 +33,7 @@ const (
 	EnvHeartbeatInterval = "HEARTBEAT_INTERVAL"
 	EnvServiceTimeout    = "SERVICE_TIMEOUT"
 	EnvCleanupInterval   = "CLEANUP_INTERVAL"
+	EnvEthName           = "ETH_NAME"
 )
 
 func CheckFlags() {
@@ -43,4 +44,5 @@ func CheckFlags() {
 	CheckDurationEnv(EnvHeartbeatInterval, HeartbeatInterval)
 	CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
 	CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
+	CheckStringEnv(EnvEthName, EthName)
 }
