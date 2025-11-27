@@ -24,8 +24,8 @@ func NewLoggerAdapter(
 	}
 }
 
-func (loggerDecorator *Decorator) Init(logPath, logName, logLevel string, logConfig *config.LogConfig) {
-	loggerDecorator.logger.Init(logPath, logName, logLevel, logConfig)
+func (loggerDecorator *Decorator) Init(logName string, logConfig *config.LogConfig) {
+	loggerDecorator.logger.Init(logName, logConfig)
 }
 
 func (loggerDecorator *Decorator) ShutdownCallback(ctx context.Context) error {
@@ -37,7 +37,7 @@ func (loggerDecorator *Decorator) LogHandler() *slog.Logger {
 }
 
 func (loggerDecorator *Decorator) Debug(msg string) {
-	loggerDecorator.logger.Debug(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Debug(fmt.Sprintf("%s: %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Debugf(msg string, v ...interface{}) {
@@ -45,7 +45,7 @@ func (loggerDecorator *Decorator) Debugf(msg string, v ...interface{}) {
 }
 
 func (loggerDecorator *Decorator) Info(msg string) {
-	loggerDecorator.logger.Info(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Info(fmt.Sprintf("%s: %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Infof(msg string, v ...interface{}) {
@@ -53,7 +53,7 @@ func (loggerDecorator *Decorator) Infof(msg string, v ...interface{}) {
 }
 
 func (loggerDecorator *Decorator) Warn(msg string) {
-	loggerDecorator.logger.Warn(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Warn(fmt.Sprintf("%s: %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Warnf(msg string, v ...interface{}) {
@@ -61,7 +61,7 @@ func (loggerDecorator *Decorator) Warnf(msg string, v ...interface{}) {
 }
 
 func (loggerDecorator *Decorator) Error(msg string) {
-	loggerDecorator.logger.Error(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Error(fmt.Sprintf("%s: %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Errorf(msg string, v ...interface{}) {
@@ -69,7 +69,7 @@ func (loggerDecorator *Decorator) Errorf(msg string, v ...interface{}) {
 }
 
 func (loggerDecorator *Decorator) Fatal(msg string) {
-	loggerDecorator.logger.Fatal(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Fatal(fmt.Sprintf("%s: %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Fatalf(msg string, v ...interface{}) {

@@ -44,18 +44,32 @@ type AsyncHandler struct {
 //   - *AsyncHandler: 返回初始化后的异步日志处理器实例
 //
 // 注意: 此函数为内部函数，不建议直接调用。如需创建日志记录器，请使用 NewLogger 函数创建 Logger 结构体并调用 Init 方法进行初始化
-func NewAsyncHandler(logPath, logName string, logLevel slog.Level, logConfig *config.LogConfig) *AsyncHandler {
+func NewAsyncHandler(logName string, logConfig *config.LogConfig) *AsyncHandler {
 	h := &AsyncHandler{
-		ch:       make(chan []byte, 1024),
-		logLevel: logLevel,
-		logName:  strings.ToUpper(logName),
+		ch:      make(chan []byte, 1024),
+		logName: strings.ToUpper(logName),
+	}
+
+	switch strings.ToLower(logConfig.Level) {
+	case "debug":
+		h.logLevel = slog.LevelDebug
+	case "info":
+		h.logLevel = slog.LevelInfo
+	case "warn":
+		h.logLevel = slog.LevelWarn
+	case "error":
+		h.logLevel = slog.LevelError
+	case "fatal":
+		h.logLevel = LevelFatal
+	default:
+		h.logLevel = slog.LevelInfo
 	}
 
 	if *global.NoLogs {
 		h.writer = os.Stdout
 	} else if logConfig.Rotate {
 		h.writer = io.MultiWriter(os.Stdout, &lumberjack.Logger{
-			Filename:   logPath,
+			Filename:   logConfig.Path,
 			MaxSize:    logConfig.MaxSize,
 			MaxBackups: logConfig.MaxBackups,
 			MaxAge:     logConfig.MaxAge,
@@ -63,9 +77,9 @@ func NewAsyncHandler(logPath, logName string, logLevel slog.Level, logConfig *co
 			LocalTime:  logConfig.LocalTime,
 		})
 	} else {
-		file, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, global.DefaultFilePermissions)
+		file, err := os.OpenFile(logConfig.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, global.DefaultFilePermissions)
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Failed to open log file %s: %v\n", logPath, err)
+			_, _ = fmt.Fprintf(os.Stderr, "Failed to open log file %s: %v\n", logConfig.Path, err)
 			h.writer = os.Stdout
 		}
 		h.writer = io.MultiWriter(os.Stdout, file)
@@ -191,21 +205,8 @@ func NewLogger() *Logger {
 // logName: 日志记录器名称
 // debug: 是否启用调试模式
 // noLogs: 是否只输出到标准输出
-func (lg *Logger) Init(logPath, logName, logLevel string, logConfig *config.LogConfig) {
-	lg.handler = NewAsyncHandler(logPath, logName, slog.LevelInfo, logConfig)
-
-	switch strings.ToLower(logLevel) {
-	case "debug":
-		lg.handler.logLevel = slog.LevelDebug
-	case "info":
-		lg.handler.logLevel = slog.LevelInfo
-	case "warn":
-		lg.handler.logLevel = slog.LevelWarn
-	case "error":
-		lg.handler.logLevel = slog.LevelError
-	case "fatal":
-		lg.handler.logLevel = LevelFatal
-	}
+func (lg *Logger) Init(logName string, logConfig *config.LogConfig) {
+	lg.handler = NewAsyncHandler(logName, logConfig)
 
 	lg.logger = slog.New(lg.handler)
 

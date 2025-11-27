@@ -9,7 +9,7 @@ import (
 )
 
 type Interface interface {
-	Init(logPath, logName, logLevel string, logConfig *config.LogConfig)
+	Init(logName string, logConfig *config.LogConfig)
 	ShutdownCallback(ctx context.Context) error
 	LogHandler() *slog.Logger
 	Debug(msg string)
