@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/discovery"
-	"github.com/FSD-Universe/service-core/interfaces/global"
-	"github.com/FSD-Universe/service-core/interfaces/logger"
-	"github.com/FSD-Universe/service-core/utils"
+	"half-nothing.cn/service-core/interfaces/discovery"
+	"half-nothing.cn/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/logger"
+	"half-nothing.cn/service-core/utils"
 )
 
 // ServiceDiscovery 服务发现

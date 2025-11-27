@@ -7,11 +7,11 @@ import (
 	"errors"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/database/entity"
-	"github.com/FSD-Universe/service-core/interfaces/database/repository"
-	"github.com/FSD-Universe/service-core/interfaces/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"half-nothing.cn/service-core/interfaces/database/entity"
+	"half-nothing.cn/service-core/interfaces/database/repository"
+	"half-nothing.cn/service-core/interfaces/logger"
 )
 
 // BaseRepository 数据库操作基础仓库

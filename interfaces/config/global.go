@@ -8,7 +8,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/FSD-Universe/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/global"
 )
 
 type LogConfig struct {

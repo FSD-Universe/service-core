@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/FSD-Universe/service-core/utils"
+	"half-nothing.cn/service-core/utils"
 )
 
 func CheckBoolEnv(envKey string, target *bool) {

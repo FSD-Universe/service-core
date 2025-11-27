@@ -4,8 +4,8 @@ package logger
 import (
 	"testing"
 
-	"github.com/FSD-Universe/service-core/interfaces/config"
-	"github.com/FSD-Universe/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/global"
 )
 
 func TestNewLogger(t *testing.T) {

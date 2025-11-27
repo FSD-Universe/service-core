@@ -5,8 +5,8 @@ package database
 import (
 	"context"
 
-	"github.com/FSD-Universe/service-core/interfaces/database/entity"
 	"gorm.io/gorm"
+	"half-nothing.cn/service-core/interfaces/database/entity"
 )
 
 // PageInterface 分页接口定义

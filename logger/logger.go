@@ -10,10 +10,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/FSD-Universe/service-core/interfaces/config"
-	"github.com/FSD-Universe/service-core/interfaces/global"
 	"github.com/fatih/color"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/global"
 )
 
 // LevelFatal 自定义日志级别 FATAL

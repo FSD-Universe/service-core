@@ -5,7 +5,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/FSD-Universe/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/config"
 )
 
 type Interface interface {

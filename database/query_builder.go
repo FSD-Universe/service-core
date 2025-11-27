@@ -3,9 +3,9 @@
 package database
 
 import (
-	"github.com/FSD-Universe/service-core/interfaces/database/entity"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"half-nothing.cn/service-core/interfaces/database/entity"
 )
 
 // QueryBuilderInterface 查询构建器接口

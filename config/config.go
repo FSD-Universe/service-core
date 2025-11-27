@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/FSD-Universe/service-core/interfaces/config"
-	"github.com/FSD-Universe/service-core/interfaces/global"
 	"gopkg.in/yaml.v3"
+	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/global"
 )
 
 // readConfig 读取并解析配置文件

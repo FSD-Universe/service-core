@@ -4,7 +4,7 @@ package repository
 import (
 	"errors"
 
-	"github.com/FSD-Universe/service-core/interfaces/database/entity"
+	"half-nothing.cn/service-core/interfaces/database/entity"
 )
 
 var (

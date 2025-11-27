@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/FSD-Universe/service-core/utils"
+	"half-nothing.cn/service-core/utils"
 )
 
 type CheckVersionResult int

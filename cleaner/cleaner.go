@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/cleaner"
-	"github.com/FSD-Universe/service-core/interfaces/logger"
-	"github.com/FSD-Universe/service-core/utils"
+	"half-nothing.cn/service-core/interfaces/cleaner"
+	"half-nothing.cn/service-core/interfaces/logger"
+	"half-nothing.cn/service-core/utils"
 )
 
 type shutdownFunc struct {

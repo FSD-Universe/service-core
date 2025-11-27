@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/global"
-	"github.com/FSD-Universe/service-core/testutils"
+	"half-nothing.cn/service-core/interfaces/global"
+	"half-nothing.cn/service-core/testutils"
 )
 
 func TestNewServiceDiscovery(t *testing.T) {

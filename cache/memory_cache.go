@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/cache"
-	"github.com/FSD-Universe/service-core/utils"
+	"half-nothing.cn/service-core/interfaces/cache"
+	"half-nothing.cn/service-core/utils"
 )
 
 func isOutDate[T any](data *cache.CachedItem[T]) bool {

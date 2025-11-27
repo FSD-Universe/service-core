@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FSD-Universe/service-core/interfaces/http/dto"
 	"github.com/labstack/echo/v4"
+	"half-nothing.cn/service-core/interfaces/http/dto"
 )
 
 // SlidingWindowLimiter 滑动窗口限流器

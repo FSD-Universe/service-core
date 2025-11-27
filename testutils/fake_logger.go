@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/FSD-Universe/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/config"
 )
 
 type FakeLogger struct {

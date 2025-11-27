@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/FSD-Universe/service-core/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/thanhpk/randstr"
+	"half-nothing.cn/service-core/utils"
 )
 
 type TokenFunc = func() any
