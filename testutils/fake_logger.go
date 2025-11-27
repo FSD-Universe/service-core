@@ -32,7 +32,7 @@ func (f *FakeLogger) LogHandler() *slog.Logger {
 }
 
 func (f *FakeLogger) Debug(msg string) {
-	f.t.Logf(msg)
+	f.t.Logf("%s", msg)
 }
 
 func (f *FakeLogger) Debugf(msg string, v ...interface{}) {
@@ -40,7 +40,7 @@ func (f *FakeLogger) Debugf(msg string, v ...interface{}) {
 }
 
 func (f *FakeLogger) Info(msg string) {
-	f.t.Log(msg)
+	f.t.Logf("%s", msg)
 }
 
 func (f *FakeLogger) Infof(msg string, v ...interface{}) {
@@ -48,7 +48,7 @@ func (f *FakeLogger) Infof(msg string, v ...interface{}) {
 }
 
 func (f *FakeLogger) Warn(msg string) {
-	f.t.Log(msg)
+	f.t.Logf("%s", msg)
 }
 
 func (f *FakeLogger) Warnf(msg string, v ...interface{}) {
@@ -56,7 +56,7 @@ func (f *FakeLogger) Warnf(msg string, v ...interface{}) {
 }
 
 func (f *FakeLogger) Error(msg string) {
-	f.t.Log(msg)
+	f.t.Logf("%s", msg)
 }
 
 func (f *FakeLogger) Errorf(msg string, v ...interface{}) {
@@ -64,7 +64,7 @@ func (f *FakeLogger) Errorf(msg string, v ...interface{}) {
 }
 
 func (f *FakeLogger) Fatal(msg string) {
-	f.t.Fatal(msg)
+	f.t.Fatalf("%s", msg)
 }
 
 func (f *FakeLogger) Fatalf(msg string, v ...interface{}) {
