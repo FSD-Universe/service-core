@@ -1,6 +1,10 @@
 package utils
 
-import "strconv"
+import (
+	"errors"
+	"strconv"
+	"time"
+)
 
 // StrToInt cast string to int
 func StrToInt(str string, defaultValue int) int {
@@ -18,4 +22,15 @@ func StrToFloat(str string, defaultValue float64) float64 {
 		return defaultValue
 	}
 	return result
+}
+
+var ErrInvalidDuration = errors.New("invalid duration")
+
+func ParseDuration(str string, target *time.Duration) error {
+	duration, err := time.ParseDuration(str)
+	if err != nil {
+		return ErrInvalidDuration
+	}
+	*target = duration
+	return nil
 }

@@ -2,7 +2,11 @@
 // $END$
 package utils
 
-import "testing"
+import (
+	"errors"
+	"testing"
+	"time"
+)
 
 func TestStrToFloat(t *testing.T) {
 	type args struct {
@@ -51,6 +55,44 @@ func TestStrToInt(t *testing.T) {
 				t.Errorf("StrToInt() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestParseDuration(t *testing.T) {
+	type args struct {
+		duration string
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Duration
+		err  error
+	}{
+		{name: "TestParseDuration", args: args{duration: "1h"}, want: time.Hour, err: nil},
+		{name: "TestParseDuration", args: args{duration: "1h20m"}, want: time.Hour + 20*time.Minute, err: nil},
+		{name: "TestParseDuration", args: args{duration: "1d"}, want: 0, err: ErrInvalidDuration},
+		{name: "TestParseDuration", args: args{duration: "abc"}, want: 0, err: ErrInvalidDuration},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			target := time.Duration(0)
+			err := ParseDuration(tt.args.duration, &target)
+			if !errors.Is(err, tt.err) {
+				t.Errorf("ParseDuration() error = %v, want %v", err, tt.err)
+			}
+			if target != tt.want {
+				t.Errorf("ParseDuration() = %v, want %v", target, tt.want)
+			}
+		})
+	}
+}
+
+func BenchmarkParseDuration(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		target := time.Duration(0)
+		_ = ParseDuration("1h20m", &target)
 	}
 }
 
