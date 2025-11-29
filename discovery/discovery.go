@@ -28,7 +28,7 @@ type ServiceDiscovery struct {
 	conn          *net.UDPConn
 	broadcastIP   string
 	localIP       string
-	version       *global.Version
+	version       *utils.Version
 	broadcastAddr *net.UDPAddr
 }
 
@@ -37,7 +37,7 @@ func NewServiceDiscovery(
 	lg logger.Interface,
 	serviceName string,
 	port int,
-	version *global.Version,
+	version *utils.Version,
 ) *ServiceDiscovery {
 	return &ServiceDiscovery{
 		logger:        logger.NewLoggerAdapter(lg, "service-discovery"),

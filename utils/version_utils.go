@@ -1,10 +1,8 @@
 // Package global
-package global
+package utils
 
 import (
 	"strings"
-
-	"half-nothing.cn/service-core/utils"
 )
 
 type CheckVersionResult int
@@ -29,9 +27,9 @@ func NewVersion(version string) *Version {
 		return nil
 	}
 	return &Version{
-		major:   utils.StrToInt(versions[0], 0),
-		minor:   utils.StrToInt(versions[1], 0),
-		patch:   utils.StrToInt(versions[2], 0),
+		major:   StrToInt(versions[0], 0),
+		minor:   StrToInt(versions[1], 0),
+		patch:   StrToInt(versions[2], 0),
 		version: version,
 	}
 }

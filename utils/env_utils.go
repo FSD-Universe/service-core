@@ -1,32 +1,27 @@
 // Package global
-package global
+package utils
 
 import (
 	"os"
 	"strconv"
 	"time"
-
-	"half-nothing.cn/service-core/utils"
 )
 
 func CheckBoolEnv(envKey string, target *bool) {
 	value := os.Getenv(envKey)
-	if val, err := strconv.ParseBool(value); err == nil && val {
-		*target = true
+	if val, err := strconv.ParseBool(value); err == nil {
+		*target = val
 	}
 }
 
 func CheckStringEnv(envKey string, target *string) {
-	value := os.Getenv(envKey)
-	if value != "" {
-		*target = value
-	}
+	*target = os.Getenv(envKey)
 }
 
-func CheckIntEnv(envKey string, target *int, defaultValue int) {
-	value := os.Getenv(envKey)
-	if value != "" {
-		*target = utils.StrToInt(value, defaultValue)
+func CheckIntEnv(envKey string, target *int) {
+	value := StrToInt(os.Getenv(envKey), *target)
+	if *target != value {
+		*target = value
 	}
 }
 

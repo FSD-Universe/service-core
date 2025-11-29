@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"half-nothing.cn/service-core/interfaces/global"
 	"half-nothing.cn/service-core/testutils"
+	"half-nothing.cn/service-core/utils"
 )
 
 func TestNewServiceDiscovery(t *testing.T) {
 	lg := testutils.NewFakeLogger(t)
-	discover := NewServiceDiscovery(lg, "test", 6850, global.NewVersion("1.0.0"))
+	discover := NewServiceDiscovery(lg, "test", 6850, utils.NewVersion("1.0.0"))
 	if discover == nil {
 		t.Fatal("ServiceDiscovery should not be nil")
 		return

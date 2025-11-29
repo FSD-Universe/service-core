@@ -4,6 +4,8 @@ package global
 import (
 	"flag"
 	"time"
+
+	"half-nothing.cn/service-core/utils"
 )
 
 var (
@@ -38,11 +40,11 @@ const (
 
 func CheckFlags() {
 	flag.Parse()
-	CheckBoolEnv(EnvNoLogs, NoLogs)
-	CheckStringEnv(EnvConfigFilePath, ConfigFilePath)
-	CheckIntEnv(EnvBroadcastPort, BroadcastPort, 9999)
-	CheckDurationEnv(EnvHeartbeatInterval, HeartbeatInterval)
-	CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
-	CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
-	CheckStringEnv(EnvEthName, EthName)
+	utils.CheckBoolEnv(EnvNoLogs, NoLogs)
+	utils.CheckStringEnv(EnvConfigFilePath, ConfigFilePath)
+	utils.CheckIntEnv(EnvBroadcastPort, BroadcastPort)
+	utils.CheckDurationEnv(EnvHeartbeatInterval, HeartbeatInterval)
+	utils.CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
+	utils.CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
+	utils.CheckStringEnv(EnvEthName, EthName)
 }
