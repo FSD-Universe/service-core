@@ -2,7 +2,6 @@
 package global
 
 import (
-	"fmt"
 	"strings"
 
 	"half-nothing.cn/service-core/utils"
@@ -24,17 +23,17 @@ type Version struct {
 	version string
 }
 
-func NewVersion(version string) (*Version, error) {
+func NewVersion(version string) *Version {
 	versions := strings.Split(version, ".")
 	if len(versions) < 3 {
-		return nil, fmt.Errorf("invalid version String, %s", version)
+		return nil
 	}
 	return &Version{
 		major:   utils.StrToInt(versions[0], 0),
 		minor:   utils.StrToInt(versions[1], 0),
 		patch:   utils.StrToInt(versions[2], 0),
 		version: version,
-	}, nil
+	}
 }
 
 func (v *Version) CheckVersion(version *Version) CheckVersionResult {
