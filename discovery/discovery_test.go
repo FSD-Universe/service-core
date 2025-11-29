@@ -12,8 +12,7 @@ import (
 
 func TestNewServiceDiscovery(t *testing.T) {
 	lg := testutils.NewFakeLogger(t)
-	version, _ := global.NewVersion("1.0.0")
-	discover := NewServiceDiscovery(lg, "test", 6850, version)
+	discover := NewServiceDiscovery(lg, "test", 6850, global.NewVersion("1.0.0"))
 	if discover == nil {
 		t.Fatal("ServiceDiscovery should not be nil")
 		return
