@@ -24,6 +24,7 @@ type User struct {
 	// 外键定义
 	CurrentAvatar *Image      `gorm:"foreignKey:ID;references:ImageId"`
 	FlightPlan    *FlightPlan `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	Roles         []*UserRole `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
 }
 
 func (u *User) GetId() uint {
