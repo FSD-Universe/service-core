@@ -14,7 +14,7 @@ type GlobalConfig struct {
 	LogConfig *logger.LogConfig `yaml:"log"`
 
 	// 内部使用
-	configVersion string `yaml:"-"`
+	ConfigVersion string `yaml:"-"`
 }
 
 func (g *GlobalConfig) InitDefaults() {
@@ -33,9 +33,9 @@ func (g *GlobalConfig) Verify() (bool, error) {
 	if configVersion == nil {
 		return false, fmt.Errorf("global version is invalid: %s", g.Version)
 	}
-	targetConfigVersion := utils.NewVersion(g.configVersion)
+	targetConfigVersion := utils.NewVersion(g.ConfigVersion)
 	if targetConfigVersion.CheckVersion(configVersion) != utils.AllMatch {
-		return false, fmt.Errorf("config version mismatch, expected %s, got %s", g.configVersion, g.Version)
+		return false, fmt.Errorf("config version mismatch, expected %s, got %s", g.ConfigVersion, g.Version)
 	}
 	if g.LogConfig == nil {
 		return false, fmt.Errorf("log config is empty")
