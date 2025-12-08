@@ -9,13 +9,13 @@ import (
 )
 
 func TestNewLogger(t *testing.T) {
-	logger := NewLogger()
+	lg := NewLogger()
 	*global.NoLogs = true
 	logConfig := &logger.LogConfig{}
 	logConfig.InitDefaults()
-	logger.Init("MAIN", logConfig)
-	logger.Debug("This is a debug message")
-	logger.Info("This is an info message")
-	logger.Warn("This is a warning message")
-	logger.Error("This is an error message")
+	lg.Init("MAIN", logConfig)
+	lg.Debug("This is a debug message")
+	lg.Info("This is an info message")
+	lg.Warn("This is a warning message")
+	lg.Error("This is an error message")
 }

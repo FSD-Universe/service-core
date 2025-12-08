@@ -10,10 +10,10 @@ import (
 )
 
 type FakeLogger struct {
-	t *testing.T
+	t testing.TB
 }
 
-func NewFakeLogger(t *testing.T) *FakeLogger {
+func NewFakeLogger(t testing.TB) *FakeLogger {
 	return &FakeLogger{
 		t: t,
 	}
