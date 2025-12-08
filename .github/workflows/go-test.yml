@@ -35,4 +35,4 @@ jobs:
           go-version: '1.24'
 
       - name: Test
-        run: go test ./...
+        run: go test ./... -tags "permission event_bus" --count=1
