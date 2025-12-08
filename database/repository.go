@@ -195,7 +195,8 @@ func (repo *BaseRepository[T]) queryWithLock(queryFunc func(tx *gorm.DB) error, 
 }
 
 func (repo *BaseRepository[T]) saveWithOptionalLock(model T, lock clause.Expression) error {
-	if model == nil {
+	var zero T
+	if model == zero {
 		return repository.ErrArgument
 	}
 
@@ -239,7 +240,8 @@ func (repo *BaseRepository[T]) updateWithOptionalLock(model T, updates map[strin
 		return nil
 	}
 
-	if model == nil || model.GetId() <= 0 {
+	var zero T
+	if model == zero || model.GetId() <= 0 {
 		return repository.ErrArgument
 	}
 
@@ -284,7 +286,8 @@ func (repo *BaseRepository[T]) updateWithLock(model T, updates map[string]interf
 // 返回值:
 //   - error: 删除操作可能产生的错误，如果参数无效则返回ErrArgument
 func (repo *BaseRepository[T]) deleteWithOptionalLock(model T, lock clause.Expression) error {
-	if model == nil || model.GetId() <= 0 {
+	var zero T
+	if model == zero || model.GetId() <= 0 {
 		return repository.ErrArgument
 	}
 

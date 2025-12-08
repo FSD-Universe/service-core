@@ -4,6 +4,7 @@
 package entity
 
 type Base interface {
+	comparable
 	GetId() uint
 	SetId(id uint)
 }
