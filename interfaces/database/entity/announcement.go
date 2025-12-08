@@ -3,7 +3,11 @@
 // Package entity
 package entity
 
-import "time"
+import (
+	"time"
+
+	"half-nothing.cn/service-core/utils"
+)
 
 type Announcement struct {
 	ID        uint   `gorm:"primarykey"`
@@ -28,3 +32,17 @@ func (a *Announcement) GetId() uint {
 func (a *Announcement) SetId(id uint) {
 	a.ID = id
 }
+
+type AnnouncementType *utils.Enum[int, string]
+
+var (
+	AnnouncementTypeNormal     AnnouncementType = utils.NewEnum(0, "普通公告")
+	AnnouncementTypeController AnnouncementType = utils.NewEnum(1, "空管中心公告")
+	AnnouncementTypeTechnical  AnnouncementType = utils.NewEnum(2, "技术组公告")
+)
+
+var AnnouncementTypeManager = utils.NewEnums(
+	AnnouncementTypeNormal,
+	AnnouncementTypeController,
+	AnnouncementTypeTechnical,
+)

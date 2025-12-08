@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"half-nothing.cn/service-core/utils"
 )
 
 type ControllerRecord struct {
@@ -30,3 +31,29 @@ func (c *ControllerRecord) GetId() uint {
 func (c *ControllerRecord) SetId(id uint) {
 	c.ID = id
 }
+
+type ControllerRecordType *utils.Enum[int, string]
+
+var (
+	ControllerRecordInterview    ControllerRecordType = utils.NewEnum(0, "面试")
+	ControllerRecordSimulator    ControllerRecordType = utils.NewEnum(1, "模拟机")
+	ControllerRecordRatingChange ControllerRecordType = utils.NewEnum(2, "权限变动")
+	ControllerRecordTraining     ControllerRecordType = utils.NewEnum(3, "训练内容")
+	ControllerRecordUnderMonitor ControllerRecordType = utils.NewEnum(4, "UM权限变动")
+	ControllerRecordSolo         ControllerRecordType = utils.NewEnum(5, "Solo权限变动")
+	ControllerRecordGuest        ControllerRecordType = utils.NewEnum(6, "客座权限变动")
+	ControllerRecordApplication  ControllerRecordType = utils.NewEnum(7, "管制员申请")
+	ControllerRecordOther        ControllerRecordType = utils.NewEnum(8, "其他未定义内容")
+)
+
+var ControllerRecordManager = utils.NewEnums(
+	ControllerRecordInterview,
+	ControllerRecordSimulator,
+	ControllerRecordRatingChange,
+	ControllerRecordTraining,
+	ControllerRecordUnderMonitor,
+	ControllerRecordSolo,
+	ControllerRecordGuest,
+	ControllerRecordApplication,
+	ControllerRecordOther,
+)

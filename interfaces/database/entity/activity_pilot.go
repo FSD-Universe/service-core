@@ -3,6 +3,8 @@
 // Package entity
 package entity
 
+import "half-nothing.cn/service-core/utils"
+
 type ActivityPilot struct {
 	ID         uint   `gorm:"primarykey"`
 	ActivityId uint   `gorm:"index:i_activity_id;not null"`
@@ -23,3 +25,19 @@ func (a *ActivityPilot) GetId() uint {
 func (a *ActivityPilot) SetId(id uint) {
 	a.ID = id
 }
+
+type ActivityPilotStatus *utils.Enum[int, string]
+
+var (
+	ActivityPilotStatusSigned    ActivityPilotStatus = utils.NewEnum(0, "报名")
+	ActivityPilotStatusClearance ActivityPilotStatus = utils.NewEnum(1, "放行")
+	ActivityPilotStatusTakeoff   ActivityPilotStatus = utils.NewEnum(2, "起飞")
+	ActivityPilotStatusLanding   ActivityPilotStatus = utils.NewEnum(3, "着陆")
+)
+
+var ActivityPilotManager = utils.NewEnums(
+	ActivityPilotStatusSigned,
+	ActivityPilotStatusClearance,
+	ActivityPilotStatusTakeoff,
+	ActivityPilotStatusLanding,
+)
