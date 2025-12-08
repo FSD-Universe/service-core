@@ -10,8 +10,8 @@ type DefaultSetter interface {
 }
 
 type Item interface {
-	Verifiable
 	DefaultSetter
+	Verifiable
 }
 
 type ManagerInterface[T Item] interface {

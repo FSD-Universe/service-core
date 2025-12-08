@@ -5,8 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-
-	"half-nothing.cn/service-core/interfaces/config"
 )
 
 type Decorator struct {
@@ -24,7 +22,7 @@ func NewLoggerAdapter(
 	}
 }
 
-func (loggerDecorator *Decorator) Init(logName string, logConfig *config.LogConfig) {
+func (loggerDecorator *Decorator) Init(logName string, logConfig *LogConfig) {
 	loggerDecorator.logger.Init(logName, logConfig)
 }
 

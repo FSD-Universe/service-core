@@ -1,5 +1,5 @@
-// Package config
-package config
+// Package logger
+package logger
 
 import (
 	"fmt"

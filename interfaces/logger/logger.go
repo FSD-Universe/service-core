@@ -4,12 +4,10 @@ package logger
 import (
 	"context"
 	"log/slog"
-
-	"half-nothing.cn/service-core/interfaces/config"
 )
 
 type Interface interface {
-	Init(logName string, logConfig *config.LogConfig)
+	Init(logName string, logConfig *LogConfig)
 	ShutdownCallback(ctx context.Context) error
 	LogHandler() *slog.Logger
 	Debug(msg string)

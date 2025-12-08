@@ -12,8 +12,8 @@ import (
 
 	"github.com/fatih/color"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/logger"
 )
 
 // LevelFatal 自定义日志级别 FATAL
@@ -44,7 +44,7 @@ type AsyncHandler struct {
 //   - *AsyncHandler: 返回初始化后的异步日志处理器实例
 //
 // 注意: 此函数为内部函数，不建议直接调用。如需创建日志记录器，请使用 NewLogger 函数创建 Logger 结构体并调用 Init 方法进行初始化
-func NewAsyncHandler(logName string, logConfig *config.LogConfig) *AsyncHandler {
+func NewAsyncHandler(logName string, logConfig *logger.LogConfig) *AsyncHandler {
 	h := &AsyncHandler{
 		ch:      make(chan []byte, 1024),
 		logName: strings.ToUpper(logName),
@@ -205,7 +205,7 @@ func NewLogger() *Logger {
 // logName: 日志记录器名称
 // debug: 是否启用调试模式
 // noLogs: 是否只输出到标准输出
-func (lg *Logger) Init(logName string, logConfig *config.LogConfig) {
+func (lg *Logger) Init(logName string, logConfig *logger.LogConfig) {
 	lg.handler = NewAsyncHandler(logName, logConfig)
 
 	lg.logger = slog.New(lg.handler)

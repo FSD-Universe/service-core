@@ -4,14 +4,14 @@ package logger
 import (
 	"testing"
 
-	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/logger"
 )
 
 func TestNewLogger(t *testing.T) {
 	logger := NewLogger()
 	*global.NoLogs = true
-	logConfig := &config.LogConfig{}
+	logConfig := &logger.LogConfig{}
 	logConfig.InitDefaults()
 	logger.Init("MAIN", logConfig)
 	logger.Debug("This is a debug message")

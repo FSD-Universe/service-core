@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/logger"
 )
 
 type FakeLogger struct {
@@ -19,7 +19,7 @@ func NewFakeLogger(t *testing.T) *FakeLogger {
 	}
 }
 
-func (f *FakeLogger) Init(_ string, _ *config.LogConfig) {
+func (f *FakeLogger) Init(_ string, _ *logger.LogConfig) {
 	return
 }
 

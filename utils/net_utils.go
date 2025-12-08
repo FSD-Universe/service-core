@@ -1,7 +1,9 @@
 // Package utils
 package utils
 
-import "net"
+import (
+	"net"
+)
 
 const (
 	DefaultLocalIP     = "127.0.0.1"
