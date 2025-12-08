@@ -35,4 +35,4 @@ jobs:
           go-version: '1.24'
 
       - name: Test
-        run: go test ./... -tags "permission event_bus" --count=1
+        run: go test ./... -tags "database http httpjwt grpc permission activity controller announcement audit flightplan history image user ticket event_bus" --count=1
