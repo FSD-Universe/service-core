@@ -1,4 +1,4 @@
-// Package global
+// Package utils
 package utils
 
 import (
@@ -15,7 +15,10 @@ func CheckBoolEnv(envKey string, target *bool) {
 }
 
 func CheckStringEnv(envKey string, target *string) {
-	*target = os.Getenv(envKey)
+	val := os.Getenv(envKey)
+	if val != "" && *target != val {
+		*target = val
+	}
 }
 
 func CheckIntEnv(envKey string, target *int) {

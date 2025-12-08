@@ -41,7 +41,12 @@ func TestCheckStringEnv(t *testing.T) {
 	if target != "test" {
 		t.Errorf("CheckStringEnv() = %v, want %v", target, "test")
 	}
+	target = "test2"
 	_ = os.Unsetenv(envKey)
+	CheckStringEnv(envKey, &target)
+	if target != "test2" {
+		t.Errorf("CheckStringEnv() = %v, want %v", target, "test2")
+	}
 }
 
 func TestCheckDurationEnv(t *testing.T) {
