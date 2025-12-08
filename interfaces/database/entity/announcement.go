@@ -1,4 +1,4 @@
-//go:build database
+//go:build database && announcement
 
 // Package entity
 package entity

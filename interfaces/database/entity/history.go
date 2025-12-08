@@ -1,4 +1,4 @@
-//go:build database
+//go:build database && history
 
 // Package entity
 package entity

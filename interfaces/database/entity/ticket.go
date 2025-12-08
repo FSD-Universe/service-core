@@ -1,4 +1,4 @@
-//go:build database
+//go:build database && ticket
 
 // Package entity
 package entity

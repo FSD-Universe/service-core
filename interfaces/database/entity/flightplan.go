@@ -1,4 +1,4 @@
-//go:build database
+//go:build database && audit
 
 // Package entity
 package entity
