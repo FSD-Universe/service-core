@@ -1,4 +1,4 @@
-//go:build database && activity
+//go:build database
 
 // Package entity
 package entity

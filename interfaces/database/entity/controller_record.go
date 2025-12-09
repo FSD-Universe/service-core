@@ -1,4 +1,4 @@
-//go:build database && controller
+//go:build database
 
 // Package entity
 package entity

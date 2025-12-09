@@ -31,16 +31,7 @@ go test ./...
 - http: Http服务
 - httpjwt: Http服务JWT验证
 - grpc: Grpc服务
-- permission: 权限管理
-- activity: 活动管理
-- controller: 管制员管理
-- announcement: 公告管理
-- audit: 审计管理
-- flightplan: 飞行计划管理
-- history: 历史管理
-- image: 图片管理
-- user: 用户管理
-- ticket: 工单管理
+- permission: 权限工具
 - event_bus: 事件总线支持
 
 ## 开源协议

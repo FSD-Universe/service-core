@@ -1,4 +1,4 @@
-//go:build database && image
+//go:build database
 
 // Package entity
 package entity
