@@ -20,7 +20,7 @@ type ControllerApplication struct {
 
 	// 外键定义
 	User  *User  `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
-	Image *Image `gorm:"foreignKey:ImageId;references:ID:constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
+	Image *Image `gorm:"foreignKey:ImageId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (c *ControllerApplication) GetId() uint {

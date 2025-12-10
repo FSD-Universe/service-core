@@ -428,6 +428,7 @@ COMMENT ON COLUMN "tickets"."created_at" IS '创建时间';
 COMMENT ON COLUMN "tickets"."closed_at" IS '工单关闭时间';
 
 CREATE INDEX "idx_tickets_user_id" ON "tickets" ("user_id");
+CREATE INDEX "idx_tickets_replier_id" ON "tickets" ("replier");
 
 ALTER TABLE "tickets"
     ADD CONSTRAINT "fk_ticket_user_id" FOREIGN KEY ("user_id")

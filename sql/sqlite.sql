@@ -255,6 +255,7 @@ CREATE TABLE `tickets`
 );
 
 CREATE INDEX `idx_tickets_user_id` ON `tickets` (`user_id`);
+CREATE INDEX `idx_tickets_replier_id` ON `tickets` (`replier`);
 
 -- 活动表
 CREATE TABLE `activities`

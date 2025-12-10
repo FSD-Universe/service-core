@@ -64,9 +64,11 @@ func (f *FakeLogger) Errorf(msg string, v ...interface{}) {
 }
 
 func (f *FakeLogger) Fatal(msg string) {
+	f.t.Fail()
 	f.t.Fatalf("%s", msg)
 }
 
 func (f *FakeLogger) Fatalf(msg string, v ...interface{}) {
+	f.t.Fail()
 	f.t.Fatalf(msg, v...)
 }

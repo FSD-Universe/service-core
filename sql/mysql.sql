@@ -237,6 +237,7 @@ CREATE TABLE `tickets`
     `closed_at`  DATETIME     NULL     DEFAULT NULL COMMENT '工单关闭时间',
     PRIMARY KEY (`id`),
     INDEX `idx_tickets_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_tickets_replier_id` (`replier`) USING BTREE COMMENT '工单回复人id索引',
     CONSTRAINT `fk_tickets_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_tickets_replier_id` FOREIGN KEY (`replier`)

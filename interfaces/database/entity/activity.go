@@ -13,7 +13,7 @@ import (
 type Activity struct {
 	ID               uint      `gorm:"primarykey"`
 	PublisherId      uint      `gorm:"index:idx_activities_publisher_id;not null"`
-	Type             int       `gorm:"default:0:not null"`
+	Type             int       `gorm:"default:0;not null"`
 	Title            string    `gorm:"type:text;not null"`
 	ImageId          *uint     `gorm:"index:idx_activities_image_id;default:null"`
 	ActiveTime       time.Time `gorm:"not null"`

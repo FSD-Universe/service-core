@@ -16,7 +16,7 @@ type Ticket struct {
 	Title     string  `gorm:"type:text;not null"`
 	Content   string  `gorm:"type:text;not null"`
 	Reply     *string `gorm:"type:text"`
-	Replier   *uint   `gorm:"index:i_replier;default:null"`
+	Replier   *uint   `gorm:"index:idx_tickets_replier_id;default:null"`
 	CreatedAt time.Time
 	ClosedAt  time.Time
 
