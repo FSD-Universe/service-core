@@ -11,9 +11,9 @@ import (
 
 type Announcement struct {
 	ID        uint   `gorm:"primarykey"`
-	PublishId uint   `gorm:"index:i_publish_id;not null"`
-	Title     string `gorm:"type:text:not null"`
-	Content   string `gorm:"type:text:not null"`
+	UserId    uint   `gorm:"index:idx_announcements_user_id;not null"`
+	Title     string `gorm:"type:text;not null"`
+	Content   string `gorm:"type:text;not null"`
 	Type      int    `gorm:"default:0;not null"`
 	Important bool   `gorm:"default:false;not null"`
 	ForceShow bool   `gorm:"default:false;not null"`
@@ -22,7 +22,7 @@ type Announcement struct {
 	DeletedAt time.Time
 
 	// 外键定义
-	User *User `gorm:"foreignKey:PublishId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (a *Announcement) GetId() uint {

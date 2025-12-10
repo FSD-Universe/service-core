@@ -7,7 +7,7 @@ import "time"
 
 type History struct {
 	ID         uint      `gorm:"primarykey"`
-	UserId     uint      `gorm:"index:i_user_id;not null"`
+	UserId     uint      `gorm:"index:idx_histories_user_id;not null"`
 	Callsign   string    `gorm:"size:16;not null"`
 	StartTime  time.Time `gorm:"not null"`
 	EndTime    time.Time `gorm:"not null"`
@@ -16,7 +16,7 @@ type History struct {
 	CreatedAt  time.Time
 
 	// 外键定义
-	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (h *History) GetId() uint {

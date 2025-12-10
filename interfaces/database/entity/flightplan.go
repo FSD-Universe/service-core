@@ -10,7 +10,7 @@ import (
 
 type FlightPlan struct {
 	ID                uint   `gorm:"primarykey"`
-	UserId            uint   `gorm:"uniqueIndex:ui_user_id;not null"`
+	UserId            uint   `gorm:"uniqueIndex:idx_flight_plans_user_id;not null"`
 	Callsign          string `gorm:"size:16;not null"`
 	FlightRule        string `gorm:"size:4;not null"`
 	Aircraft          string `gorm:"size:128;not null"`
@@ -19,7 +19,6 @@ type FlightPlan struct {
 	PlanDepartureTime string `gorm:"size:8;not null"`
 	AtcDepartureTime  string `gorm:"size:8;not null"`
 	CruiseAltitude    string `gorm:"size:8;not null"`
-	Airport           string `gorm:"size:8;not null"`
 	ArrivalAirport    string `gorm:"size:8;not null"`
 	RouteTimeHour     string `gorm:"size:2;not null"`
 	RouteTimeMinute   string `gorm:"size:2;not null"`
@@ -30,12 +29,11 @@ type FlightPlan struct {
 	Route             string `gorm:"type:text;not null"`
 	Locked            bool   `gorm:"default:false;not null"`
 	FromWeb           bool   `gorm:"default:false;not null"`
-	Effective         bool   `gorm:"default:false;not null"`
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 
 	// 外键定义
-	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (f *FlightPlan) GetId() uint {

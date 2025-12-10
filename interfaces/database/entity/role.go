@@ -3,10 +3,20 @@
 // Package entity
 package entity
 
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
 type Role struct {
 	ID         uint   `gorm:"primarykey"`
 	Name       string `gorm:"size:64;not null"`
 	Permission uint64 `gorm:"default:0;not null"`
+	Comment    string `gorm:"type:text;not null"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt
 }
 
 func (r *Role) GetId() uint {

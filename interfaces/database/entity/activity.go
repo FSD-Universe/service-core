@@ -12,18 +12,18 @@ import (
 
 type Activity struct {
 	ID               uint      `gorm:"primarykey"`
-	PublisherId      uint      `gorm:"index:i_publisher_id;not null"`
+	PublisherId      uint      `gorm:"index:idx_activities_publisher_id;not null"`
 	Type             int       `gorm:"default:0:not null"`
 	Title            string    `gorm:"type:text;not null"`
-	ImageId          uint      `gorm:"index:i_image_id;default:null"`
+	ImageId          *uint     `gorm:"index:idx_activities_image_id;default:null"`
 	ActiveTime       time.Time `gorm:"not null"`
 	DepartureAirport string    `gorm:"size:64;not null"`
 	ArrivalAirport   string    `gorm:"size:64;not null"`
-	Route            string    `gorm:"type:text"`
-	Distance         int       `gorm:"default:0"`
-	Route2           string    `gorm:"type:text"`
-	Distance2        int       `gorm:"default:0"`
-	OpenFir          string    `gorm:"size:128;default:null"`
+	Route            *string   `gorm:"type:text;default:null"`
+	Distance         *int      `gorm:"default:null"`
+	SecondRoute      *string   `gorm:"type:text;default:null"`
+	SecondDistance   *int      `gorm:"default:null"`
+	OpenFir          *string   `gorm:"size:128;default:null"`
 	Status           int       `gorm:"default:0;not null"`
 	NOTAMS           string    `gorm:"type:text;not null"`
 	CreatedAt        time.Time
@@ -31,11 +31,11 @@ type Activity struct {
 	DeletedAt        gorm.DeletedAt
 
 	// 外键定义
-	Publisher   *User                 `gorm:"foreignKey:PublisherId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
-	Image       *Image                `gorm:"foreignKey:ImageId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
-	Pilots      []*ActivityPilot      `gorm:"foreignKey:ActivityId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
-	Facilities  []*ActivityFacility   `gorm:"foreignKey:ActivityId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
-	Controllers []*ActivityController `gorm:"foreignKey:ActivityId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	Publisher   *User                 `gorm:"foreignKey:PublisherId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
+	Image       *Image                `gorm:"foreignKey:ImageId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
+	Pilots      []*ActivityPilot      `gorm:"foreignKey:ActivityId;references:ID"`
+	Facilities  []*ActivityFacility   `gorm:"foreignKey:ActivityId;references:ID"`
+	Controllers []*ActivityController `gorm:"foreignKey:ActivityId;references:ID"`
 }
 
 func (a *Activity) GetId() uint {

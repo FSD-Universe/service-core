@@ -12,16 +12,16 @@ import (
 
 type ControllerRecord struct {
 	ID           uint   `gorm:"primarykey"`
-	UserId       uint   `gorm:"index:i_user_id;not null"`
-	InstructorId uint   `gorm:"index:i_instructor_id;not null"`
+	UserId       uint   `gorm:"index:idx_controller_records_user_id;not null"`
+	InstructorId uint   `gorm:"index:idx_controller_records_instructor_id;not null"`
 	Type         int    `gorm:"default:0;not null"`
 	Content      string `gorm:"type:text;not null"`
 	CreatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
 
 	// 外键定义
-	User       *User       `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
-	Instructor *Instructor `gorm:"foreignKey:InstructorId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	User       *User       `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
+	Instructor *Instructor `gorm:"foreignKey:InstructorId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (c *ControllerRecord) GetId() uint {

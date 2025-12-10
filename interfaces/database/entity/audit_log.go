@@ -11,16 +11,13 @@ import (
 
 type AuditLog struct {
 	ID            uint          `gorm:"primarykey"`
-	Subject       uint          `gorm:"index:i_subject;not null"`
+	Subject       string        `gorm:"type:text;not null"`
 	Object        string        `gorm:"type:text;not null"`
-	Event         string        `gorm:"size:64;not null"`
+	Event         string        `gorm:"size:64;index:idx_audit_logs_event;not null"`
 	Ip            string        `gorm:"size:128;not null"`
 	UserAgent     string        `gorm:"type:text;not null"`
 	ChangeDetails *ChangeDetail `gorm:"type:text;serializer:json;default:null"`
 	CreatedAt     time.Time
-
-	// 外键定义
-	User *User `gorm:"foreignKey:Subject;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
 }
 
 type ChangeDetail struct {
@@ -41,22 +38,33 @@ type AuditEvent *utils.Enum[string, string]
 //goland:noinspection GoCommentStart
 var (
 	// 用户相关
+	AuditEventUserRegistered       AuditEvent = utils.NewEnum("UserRegistered", "用户注册")
+	AuditEventUserResetPassword    AuditEvent = utils.NewEnum("UserResetPassword", "用户重置密码")
 	AuditEventUserInformationEdit  AuditEvent = utils.NewEnum("UserInformationEdit", "管理员修改用户信息")
 	AuditEventUserPermissionGrant  AuditEvent = utils.NewEnum("UserPermissionGrant", "管理员授予用户权限")
 	AuditEventUserPermissionRevoke AuditEvent = utils.NewEnum("UserPermissionRevoke", "管理员撤销用户权限")
-	AuditEventUserRoleGrant        AuditEvent = utils.NewEnum("UserRoleGrant", "管理员授予用户角色")
-	AuditEventUserRoleRevoke       AuditEvent = utils.NewEnum("UserRoleRevoke", "管理员撤销用户角色")
+	AuditEventUserBan              AuditEvent = utils.NewEnum("UserBan", "管理员封禁用户")
+
+	// 角色相关
+	AuditEventRoleCreated          AuditEvent = utils.NewEnum("RoleCreated", "管理员创建角色")
+	AuditEventRoleDeleted          AuditEvent = utils.NewEnum("RoleDeleted", "管理员删除角色")
+	AuditEventRolePermissionGrant  AuditEvent = utils.NewEnum("RolePermissionGrant", "管理员授予角色权限")
+	AuditEventRolePermissionRevoke AuditEvent = utils.NewEnum("RolePermissionRevoke", "管理员撤销角色权限")
+	AuditEventRoleGrant            AuditEvent = utils.NewEnum("RoleGrant", "管理员授予用户角色")
+	AuditEventRoleRevoke           AuditEvent = utils.NewEnum("RoleRevoke", "管理员撤销用户角色")
 
 	// 活动相关
-	AuditEventActivityCreated           AuditEvent = utils.NewEnum("ActivityCreated", "管理员创建活动")
-	AuditEventActivityDeleted           AuditEvent = utils.NewEnum("ActivityDeleted", "管理员删除活动")
-	AuditEventActivityUpdated           AuditEvent = utils.NewEnum("ActivityUpdated", "管理员修改活动信息")
-	AuditEventActivityPilotSign         AuditEvent = utils.NewEnum("ActivityPilotSign", "飞行员报名活动")
-	AuditEventActivityPilotLeave        AuditEvent = utils.NewEnum("ActivityPilotLeave", "飞行员退出活动")
-	AuditEventActivityPilotStatusChange AuditEvent = utils.NewEnum("ActivityPilotStatusChange", "管理员修改飞行员活动状态")
-	AuditEventActivityControllerJoin    AuditEvent = utils.NewEnum("AuditEventActivityControllerJoin", "管制员加入活动")
-	AuditEventActivityControllerLeave   AuditEvent = utils.NewEnum("AuditEventActivityControllerLeave", "管制员退出活动")
-	AuditEventActivityStatusChange      AuditEvent = utils.NewEnum("ActivityStatusChange", "管理员修改活动状态")
+	AuditEventActivityCreated             AuditEvent = utils.NewEnum("ActivityCreated", "管理员创建活动")
+	AuditEventActivityDeleted             AuditEvent = utils.NewEnum("ActivityDeleted", "管理员删除活动")
+	AuditEventActivityUpdated             AuditEvent = utils.NewEnum("ActivityUpdated", "管理员修改活动信息")
+	AuditEventActivityPilotSign           AuditEvent = utils.NewEnum("ActivityPilotSign", "飞行员报名活动")
+	AuditEventActivityPilotLeave          AuditEvent = utils.NewEnum("ActivityPilotLeave", "飞行员退出活动")
+	AuditEventActivityPilotStatusChange   AuditEvent = utils.NewEnum("ActivityPilotStatusChange", "管理员修改飞行员活动状态")
+	AuditEventActivityControllerJoin      AuditEvent = utils.NewEnum("AuditEventActivityControllerJoin", "管制员加入活动")
+	AuditEventActivityControllerLeave     AuditEvent = utils.NewEnum("AuditEventActivityControllerLeave", "管制员退出活动")
+	AuditEventActivityStatusChange        AuditEvent = utils.NewEnum("ActivityStatusChange", "管理员修改活动状态")
+	AuditEventActivityCoordinationCreated AuditEvent = utils.NewEnum("ActivityCoordinationCreated", "管理员创建活动协调表")
+	AuditEventActivityCoordinationUpdated AuditEvent = utils.NewEnum("ActivityCoordinationUpdated", "活动协调信息表被编辑")
 
 	// 在线管理相关
 	AuditEventClientKickedFsd        AuditEvent = utils.NewEnum("ClientKickedFromFsd", "管理员在FSD中踢出用户")
@@ -70,7 +78,7 @@ var (
 	// 工单相关
 	AuditEventTicketOpen    AuditEvent = utils.NewEnum("TicketOpen", "用户创建工单")
 	AuditEventTicketClose   AuditEvent = utils.NewEnum("TicketClose", "用户或管理员关闭工单")
-	AuditEventTicketDeleted AuditEvent = utils.NewEnum("TicketDeleted", "用户或管理员删除工单")
+	AuditEventTicketDeleted AuditEvent = utils.NewEnum("TicketDeleted", "管理员删除工单")
 
 	// 管制员相关
 	AuditEventControllerRecordCreated         AuditEvent = utils.NewEnum("ControllerRecordCreated", "管理员创建管制员履历")
@@ -81,6 +89,11 @@ var (
 	AuditEventControllerApplicationPassed     AuditEvent = utils.NewEnum("ControllerApplicationPassed", "管理员通过管制员申请")
 	AuditEventControllerApplicationProcessing AuditEvent = utils.NewEnum("ControllerApplicationProcessing", "管理员正在处理管制员申请")
 	AuditEventControllerApplicationRejected   AuditEvent = utils.NewEnum("ControllerApplicationRejected", "管理员拒绝管制员申请")
+	AuditEventControllerInstructorChange      AuditEvent = utils.NewEnum("ControllerInstructorChange", "管理员修改管制员教员")
+
+	// 管制教员相关
+	AuditEventInstructorSendEmail    AuditEvent = utils.NewEnum("InstructorSendEmail", "管制教员发送邮件")
+	AuditEventInstructorRatingChange AuditEvent = utils.NewEnum("InstructorRatingChange", "管制教员权限变更")
 
 	// 飞行计划相关
 	AuditEventFlightPlanDeleted     AuditEvent = utils.NewEnum("FlightPlanDeleted", "管理员删除用户飞行计划")
@@ -98,11 +111,18 @@ var (
 )
 
 var AuditEventManager = utils.NewEnums(
+	AuditEventUserRegistered,
+	AuditEventUserResetPassword,
 	AuditEventUserInformationEdit,
 	AuditEventUserPermissionGrant,
 	AuditEventUserPermissionRevoke,
-	AuditEventUserRoleGrant,
-	AuditEventUserRoleRevoke,
+	AuditEventUserBan,
+	AuditEventRoleCreated,
+	AuditEventRoleDeleted,
+	AuditEventRolePermissionGrant,
+	AuditEventRolePermissionRevoke,
+	AuditEventRoleGrant,
+	AuditEventRoleRevoke,
 	AuditEventActivityCreated,
 	AuditEventActivityDeleted,
 	AuditEventActivityUpdated,
@@ -112,6 +132,8 @@ var AuditEventManager = utils.NewEnums(
 	AuditEventActivityControllerJoin,
 	AuditEventActivityControllerLeave,
 	AuditEventActivityStatusChange,
+	AuditEventActivityCoordinationCreated,
+	AuditEventActivityCoordinationUpdated,
 	AuditEventClientKickedFsd,
 	AuditEventClientKicked,
 	AuditEventClientMessage,
@@ -128,6 +150,9 @@ var AuditEventManager = utils.NewEnums(
 	AuditEventControllerApplicationPassed,
 	AuditEventControllerApplicationProcessing,
 	AuditEventControllerApplicationRejected,
+	AuditEventControllerInstructorChange,
+	AuditEventInstructorSendEmail,
+	AuditEventInstructorRatingChange,
 	AuditEventFlightPlanDeleted,
 	AuditEventFlightPlanSelfDeleted,
 	AuditEventFlightPlanLock,

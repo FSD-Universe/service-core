@@ -11,19 +11,19 @@ import (
 
 type Image struct {
 	ID        uint   `gorm:"primarykey"`
-	UserId    uint   `gorm:"index:i_user_id;not null"`
+	UserId    uint   `gorm:"index:idx_images_user_id;not null"`
 	Hashcode  string `gorm:"size:128;not null"`
 	Filename  string `gorm:"size:128;not null"`
-	Url       string `gorm:"text;not null"`
+	Url       string `gorm:"type:text;not null"`
 	Size      int64  `gorm:"default:0;not null"`
 	MimeType  string `gorm:"size:128;not null"`
-	Comment   string `gorm:"text;not null"`
+	Comment   string `gorm:"type:text;not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
 
 	// 外键定义
-	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:cascade,OnDelete:cascade"`
+	User *User `gorm:"foreignKey:UserId;references:ID;constraint:OnUpdate:RESTRICT,OnDelete:RESTRICT"`
 }
 
 func (i *Image) GetId() uint {
