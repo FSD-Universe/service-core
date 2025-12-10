@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	Debug          = flag.Bool("debug", false, "Enable debug mode")
 	NoLogs         = flag.Bool("no_logs", false, "Disable logging to file")
 	ConfigFilePath = flag.String("config", "./config.yaml", "Path to configuration file")
 )
@@ -29,6 +30,7 @@ const (
 
 	LogName = "MAIN"
 
+	EnvDebug             = "DEBUG"
 	EnvNoLogs            = "NO_LOGS"
 	EnvConfigFilePath    = "CONFIG_FILE_PATH"
 	EnvBroadcastPort     = "BROADCAST_PORT"
@@ -40,6 +42,7 @@ const (
 
 func CheckFlags() {
 	flag.Parse()
+	utils.CheckBoolEnv(EnvDebug, Debug)
 	utils.CheckBoolEnv(EnvNoLogs, NoLogs)
 	utils.CheckStringEnv(EnvConfigFilePath, ConfigFilePath)
 	utils.CheckIntEnv(EnvBroadcastPort, BroadcastPort)
