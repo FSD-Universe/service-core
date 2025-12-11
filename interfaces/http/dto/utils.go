@@ -8,7 +8,6 @@ import (
 
 var (
 	ErrLackParam             = NewApiStatus("PARAM_MISS", "缺少参数", HttpCodeBadRequest)
-	ErrInvalidParam          = NewApiStatus("PARAM_INVALID", "非法参数", HttpCodeBadRequest)
 	ErrErrorParam            = NewApiStatus("PARAM_ERROR", "参数错误", HttpCodeBadRequest)
 	ErrNoPermission          = NewApiStatus("NO_PERMISSION", "无权这么做", HttpCodePermissionDenied)
 	ErrServerError           = NewApiStatus("SERVER_ERROR", "服务器错误", HttpCodeInternalError)
