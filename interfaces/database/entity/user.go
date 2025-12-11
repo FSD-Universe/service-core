@@ -12,7 +12,7 @@ type User struct {
 	ID             uint          `gorm:"primarykey"`
 	Username       string        `gorm:"uniqueIndex:idx_users_username;size:64;not null"`
 	Email          string        `gorm:"uniqueIndex:idx_users_email;size:128;not null"`
-	Cid            int           `gorm:"uniqueIndex:idx_users_cid;not null"`
+	Cid            uint          `gorm:"uniqueIndex:idx_users_cid;not null"`
 	Password       string        `gorm:"size:128;not null"`
 	ImageId        *uint         `gorm:"default:null"`
 	QQ             *string       `gorm:"size:16;default:null"`

@@ -3,7 +3,7 @@ CREATE TABLE `users`
     `id`               INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '用户id',
     `username`         VARCHAR(64)     NOT NULL COMMENT '用户名',
     `email`            VARCHAR(128)    NOT NULL COMMENT '用户邮箱',
-    `cid`              INT             NOT NULL COMMENT '用户CID',
+    `cid`              INT UNSIGNED    NOT NULL COMMENT '用户CID',
     `password`         VARCHAR(128)    NOT NULL COMMENT '用户密码(bcrypt加密)',
     `image_id`         INT UNSIGNED    NULL     DEFAULT NULL COMMENT '用户头像索引',
     `qq`               VARCHAR(16)     NULL     DEFAULT NULL COMMENT '用户QQ',
