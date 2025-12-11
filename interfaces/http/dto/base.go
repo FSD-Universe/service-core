@@ -35,6 +35,10 @@ func NewApiStatus(statusName, description string, httpCode HttpCode) *ApiStatus 
 	}
 }
 
+func (a *ApiStatus) Error() string {
+	return a.Description
+}
+
 type ApiResponse[T any] struct {
 	HttpCode int    `json:"-"`
 	Code     string `json:"code"`
