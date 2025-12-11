@@ -52,7 +52,7 @@ func NewBaseRepository[T entity.Base](
 func (repo *BaseRepository[T]) GetById(id uint) (T, error) {
 	var result T
 	result.SetId(id)
-	err := repo.query(func(tx *gorm.DB) error {
+	err := repo.Query(func(tx *gorm.DB) error {
 		return tx.First(result).Error
 	})
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -62,18 +62,18 @@ func (repo *BaseRepository[T]) GetById(id uint) (T, error) {
 }
 
 func (repo *BaseRepository[T]) Save(entity T) error {
-	return repo.save(entity)
+	return repo.SaveEntity(entity)
 }
 
 func (repo *BaseRepository[T]) Delete(entity T) error {
-	return repo.delete(entity)
+	return repo.DeleteEntity(entity)
 }
 
 func (repo *BaseRepository[T]) Update(entity T, updates map[string]interface{}) error {
-	return repo.update(entity, updates)
+	return repo.UpdateEntity(entity, updates)
 }
 
-// query 执行数据库查询操作
+// Query 执行数据库查询操作
 //
 // 该函数在指定的超时时间内执行传入的查询函数，为查询操作提供统一的上下文管理。
 //
@@ -82,7 +82,7 @@ func (repo *BaseRepository[T]) Update(entity T, updates map[string]interface{}) 
 //
 // 返回值:
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) query(queryFunc func(tx *gorm.DB) error) error {
+func (repo *BaseRepository[T]) Query(queryFunc func(tx *gorm.DB) error) error {
 	if queryFunc == nil {
 		return repository.ErrArgument
 	}
@@ -93,7 +93,7 @@ func (repo *BaseRepository[T]) query(queryFunc func(tx *gorm.DB) error) error {
 	return queryFunc(repo.db.WithContext(ctx))
 }
 
-// queryEntityWithBuilder 使用查询构建器查询单个实体
+// QueryEntityWithBuilder 使用查询构建器查询单个实体
 //
 // 该函数通过传入的查询构建器构造查询条件，并将查询结果填充到目标实体对象中。
 // 适用于需要根据复杂条件查询单个实体的场景。
@@ -104,15 +104,15 @@ func (repo *BaseRepository[T]) query(queryFunc func(tx *gorm.DB) error) error {
 //
 // 返回值:
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) queryEntityWithBuilder(queryBuilder QueryBuilderInterface[T], dest T) error {
+func (repo *BaseRepository[T]) QueryEntityWithBuilder(queryBuilder QueryBuilderInterface[T], dest T) error {
 	queryFunc := func(tx *gorm.DB) error { return queryBuilder.Build(tx).First(dest).Error }
 	if queryBuilder.GetTransaction() {
-		return repo.queryWithTransaction(queryFunc)
+		return repo.QueryWithTransaction(queryFunc)
 	}
-	return repo.query(queryFunc)
+	return repo.Query(queryFunc)
 }
 
-// queryEntitiesWithBuilder 使用查询构建器查询多个实体
+// QueryEntitiesWithBuilder 使用查询构建器查询多个实体
 //
 // 该函数通过传入的查询构建器构造查询条件，并将查询结果填充到目标实体切片中。
 // 适用于需要根据复杂条件查询多个实体的场景。
@@ -123,15 +123,15 @@ func (repo *BaseRepository[T]) queryEntityWithBuilder(queryBuilder QueryBuilderI
 //
 // 返回值:
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) queryEntitiesWithBuilder(queryBuilder QueryBuilderInterface[T], dest []T) error {
+func (repo *BaseRepository[T]) QueryEntitiesWithBuilder(queryBuilder QueryBuilderInterface[T], dest []T) error {
 	queryFunc := func(tx *gorm.DB) error { return queryBuilder.Build(tx).Find(dest).Error }
 	if queryBuilder.GetTransaction() {
-		return repo.queryWithTransaction(queryFunc)
+		return repo.QueryWithTransaction(queryFunc)
 	}
-	return repo.query(queryFunc)
+	return repo.Query(queryFunc)
 }
 
-// queryWithTransaction 在事务中执行数据库查询操作
+// QueryWithTransaction 在事务中执行数据库查询操作
 //
 // 该函数在指定的超时时间内启动一个数据库事务，并在该事务中执行传入的查询函数。
 // 如果查询函数执行成功，事务将被提交；否则事务将被回滚。
@@ -141,17 +141,17 @@ func (repo *BaseRepository[T]) queryEntitiesWithBuilder(queryBuilder QueryBuilde
 //
 // 返回值:
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) queryWithTransaction(queryFunc func(tx *gorm.DB) error) error {
+func (repo *BaseRepository[T]) QueryWithTransaction(queryFunc func(tx *gorm.DB) error) error {
 	if queryFunc == nil {
 		return repository.ErrArgument
 	}
 
-	return repo.query(func(tx *gorm.DB) error {
+	return repo.Query(func(tx *gorm.DB) error {
 		return tx.Transaction(queryFunc)
 	})
 }
 
-// queryWithPagination 执行分页查询操作
+// QueryWithPagination 执行分页查询操作
 //
 // 该函数使用分页器接口执行分页查询，计算总记录数并获取当前页数据。
 //
@@ -162,7 +162,7 @@ func (repo *BaseRepository[T]) queryWithTransaction(queryFunc func(tx *gorm.DB) 
 // 返回值:
 //   - int64: 总记录数
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) queryWithPagination(paginator PageableInterface[T], page PageInterface[T]) (int64, error) {
+func (repo *BaseRepository[T]) QueryWithPagination(paginator PageableInterface[T], page PageInterface[T]) (int64, error) {
 	if paginator == nil {
 		return 0, nil
 	}
@@ -173,7 +173,7 @@ func (repo *BaseRepository[T]) queryWithPagination(paginator PageableInterface[T
 	return paginator.Paginate(ctx, page)
 }
 
-// queryWithLock 在带锁的事务中执行数据库查询操作
+// QueryWithLock 在带锁的事务中执行数据库查询操作
 //
 // 该函数在指定的超时时间内启动一个带锁的数据库事务，并在该事务中执行传入的查询函数。
 // 适用于需要加锁的并发安全操作。
@@ -184,17 +184,17 @@ func (repo *BaseRepository[T]) queryWithPagination(paginator PageableInterface[T
 //
 // 返回值:
 //   - error: 查询过程中可能发生的错误
-func (repo *BaseRepository[T]) queryWithLock(queryFunc func(tx *gorm.DB) error, lock clause.Expression) error {
+func (repo *BaseRepository[T]) QueryWithLock(queryFunc func(tx *gorm.DB) error, lock clause.Expression) error {
 	if queryFunc == nil {
 		return repository.ErrArgument
 	}
 
-	return repo.query(func(tx *gorm.DB) error {
+	return repo.Query(func(tx *gorm.DB) error {
 		return tx.Clauses(lock).Transaction(queryFunc)
 	})
 }
 
-func (repo *BaseRepository[T]) saveWithOptionalLock(model T, lock clause.Expression) error {
+func (repo *BaseRepository[T]) SaveWithOptionalLock(model T, lock clause.Expression) error {
 	var zero T
 	if model == zero {
 		return repository.ErrArgument
@@ -208,12 +208,12 @@ func (repo *BaseRepository[T]) saveWithOptionalLock(model T, lock clause.Express
 	}
 
 	if lock == nil {
-		return repo.queryWithTransaction(processFunc)
+		return repo.QueryWithTransaction(processFunc)
 	}
-	return repo.queryWithLock(processFunc, lock)
+	return repo.QueryWithLock(processFunc, lock)
 }
 
-// save 保存实体到数据库
+// SaveEntity 保存实体到数据库
 //
 // 该函数根据实体的ID字段判断是创建新记录还是更新现有记录。
 // 如果ID为0，则执行创建操作；否则执行更新操作。
@@ -223,19 +223,19 @@ func (repo *BaseRepository[T]) saveWithOptionalLock(model T, lock clause.Express
 //
 // 返回值:
 //   - error: 保存过程中可能发生的错误，包括实体为空或数据库操作错误
-func (repo *BaseRepository[T]) save(model T) error {
-	return repo.saveWithOptionalLock(model, nil)
+func (repo *BaseRepository[T]) SaveEntity(model T) error {
+	return repo.SaveWithOptionalLock(model, nil)
 }
 
-func (repo *BaseRepository[T]) saveWithLock(model T, lock clause.Expression) error {
+func (repo *BaseRepository[T]) SaveWithLock(model T, lock clause.Expression) error {
 	if lock == nil {
 		lock = clause.Locking{Strength: "UPDATE"}
 	}
 
-	return repo.saveWithOptionalLock(model, lock)
+	return repo.SaveWithOptionalLock(model, lock)
 }
 
-func (repo *BaseRepository[T]) updateWithOptionalLock(model T, updates map[string]interface{}, lock clause.Expression) error {
+func (repo *BaseRepository[T]) UpdateWithOptionalLock(model T, updates map[string]interface{}, lock clause.Expression) error {
 	if updates == nil || len(updates) == 0 {
 		return nil
 	}
@@ -250,12 +250,12 @@ func (repo *BaseRepository[T]) updateWithOptionalLock(model T, updates map[strin
 	}
 
 	if lock != nil {
-		return repo.queryWithTransaction(processFunc)
+		return repo.QueryWithTransaction(processFunc)
 	}
-	return repo.queryWithLock(processFunc, lock)
+	return repo.QueryWithLock(processFunc, lock)
 }
 
-// update 更新实体的部分字段
+// UpdateEntity 更新实体的部分字段
 //
 // 该函数用于更新实体的部分字段，通过updates映射指定要更新的字段和值。
 // 更新前会验证实体是否有效以及是否包含有效的ID。
@@ -266,26 +266,26 @@ func (repo *BaseRepository[T]) updateWithOptionalLock(model T, updates map[strin
 //
 // 返回值:
 //   - error: 更新过程中可能发生的错误
-func (repo *BaseRepository[T]) update(model T, updates map[string]interface{}) error {
-	return repo.updateWithOptionalLock(model, updates, nil)
+func (repo *BaseRepository[T]) UpdateEntity(model T, updates map[string]interface{}) error {
+	return repo.UpdateWithOptionalLock(model, updates, nil)
 }
 
-func (repo *BaseRepository[T]) updateWithLock(model T, updates map[string]interface{}, lock clause.Expression) error {
+func (repo *BaseRepository[T]) UpdateWithLock(model T, updates map[string]interface{}, lock clause.Expression) error {
 	if lock == nil {
 		lock = clause.Locking{Strength: "UPDATE"}
 	}
 
-	return repo.updateWithOptionalLock(model, updates, lock)
+	return repo.UpdateWithOptionalLock(model, updates, lock)
 }
 
-// deleteWithOptionalLock 删除指定的模型实体
+// DeleteWithOptionalLock 删除指定的模型实体
 // 参数:
 //   - model: 要删除的模型实体，必须实现GetId()方法且ID大于0
 //   - lock: 锁定条件表达式，可为nil
 //
 // 返回值:
 //   - error: 删除操作可能产生的错误，如果参数无效则返回ErrArgument
-func (repo *BaseRepository[T]) deleteWithOptionalLock(model T, lock clause.Expression) error {
+func (repo *BaseRepository[T]) DeleteWithOptionalLock(model T, lock clause.Expression) error {
 	var zero T
 	if model == zero || model.GetId() <= 0 {
 		return repository.ErrArgument
@@ -296,12 +296,12 @@ func (repo *BaseRepository[T]) deleteWithOptionalLock(model T, lock clause.Expre
 	}
 
 	if lock == nil {
-		return repo.queryWithTransaction(processFunc)
+		return repo.QueryWithTransaction(processFunc)
 	}
-	return repo.queryWithLock(processFunc, lock)
+	return repo.QueryWithLock(processFunc, lock)
 }
 
-// delete 从数据库中删除实体
+// DeleteEntity 从数据库中删除实体
 //
 // 该函数用于删除指定的实体记录。
 //
@@ -310,11 +310,11 @@ func (repo *BaseRepository[T]) deleteWithOptionalLock(model T, lock clause.Expre
 //
 // 返回值:
 //   - error: 删除过程中可能发生的错误
-func (repo *BaseRepository[T]) delete(model T) error {
-	return repo.deleteWithOptionalLock(model, nil)
+func (repo *BaseRepository[T]) DeleteEntity(model T) error {
+	return repo.DeleteWithOptionalLock(model, nil)
 }
 
-// deleteWithLock 带锁删除指定的模型实体
+// DeleteWithLock 带锁删除指定的模型实体
 // 当未提供锁时，默认使用UPDATE锁
 // 参数:
 //   - model: 要删除的模型实体，必须实现GetId()方法且ID大于0
@@ -322,10 +322,10 @@ func (repo *BaseRepository[T]) delete(model T) error {
 //
 // 返回值:
 //   - error: 删除操作可能产生的错误，如果参数无效则返回ErrArgument
-func (repo *BaseRepository[T]) deleteWithLock(model T, lock clause.Expression) error {
+func (repo *BaseRepository[T]) DeleteWithLock(model T, lock clause.Expression) error {
 	if lock == nil {
 		lock = clause.Locking{Strength: "UPDATE"}
 	}
 
-	return repo.deleteWithOptionalLock(model, lock)
+	return repo.DeleteWithOptionalLock(model, lock)
 }
