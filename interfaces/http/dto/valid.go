@@ -25,8 +25,11 @@ func ValidStruct(val interface{}) (*ApiStatus, error) {
 		tags := strings.Split(tag, ",")
 		hasValue := !v.Field(i).IsZero()
 		for _, t := range tags {
-			if t == "required" && !hasValue {
-				return ErrLackParam, nil
+			if !hasValue {
+				if t == "required" {
+					return ErrLackParam, nil
+				}
+				continue
 			}
 			if strings.HasPrefix(t, "min=") {
 				res, err := processTagMin(t, v.Field(i))

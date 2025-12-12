@@ -25,7 +25,7 @@ func TestValidStruct(t *testing.T) {
 		{name: "TestValidStruct", args: &arg{Name: "AAA", Age: 0, Test: "AAA"}, want: &want{want: ErrLackParam, hasError: false}},
 		{name: "TestValidStruct", args: &arg{Name: "aaa", Age: 24, Test: "1AAAA"}, want: &want{want: ErrErrorParam, hasError: false}},
 		{name: "TestValidStruct", args: &arg{Name: "aaa", Age: 23, Test: "asd"}, want: &want{want: nil, hasError: false}},
-		{name: "TestValidStruct", args: &arg{Name: "aaa", Age: 23, Test: "asd", User: "AAAAA"}, want: &want{want: nil, hasError: false}},
+		{name: "TestValidStruct", args: &arg{Name: "aaa", Age: 23, Test: "asd", User: "AAAAA"}, want: &want{want: ErrErrorParam, hasError: false}},
 		{name: "TestValidStruct", args: &arg{Name: "aaa", Age: 23, Test: "asd", User: "AAAAAA"}, want: &want{want: nil, hasError: false}},
 	}
 	for _, tt := range tests {
