@@ -1,3 +1,6 @@
+-- Copyright (c) 2025 Half_nothing
+-- SPDX-License-Identifier: MIT
+
 -- 用户信息表
 CREATE TABLE "users"
 (

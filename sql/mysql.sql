@@ -1,3 +1,6 @@
+-- Copyright (c) 2025 Half_nothing
+-- SPDX-License-Identifier: MIT
+
 CREATE TABLE `users`
 (
     `id`               INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '用户id',
