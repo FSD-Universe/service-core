@@ -15,7 +15,7 @@ import (
 	"half-nothing.cn/service-core/utils"
 )
 
-type TokenFunc = func() any
+type TokenFunc = func(encode bool) any
 
 type JwtConfig struct {
 	Issuer        string `yaml:"issuer"`
@@ -23,6 +23,7 @@ type JwtConfig struct {
 	Secret        string `yaml:"secret"`
 	PublicKey     string `yaml:"public_key"`
 	PrivateKey    string `yaml:"private_key"`
+	ReadOnly      bool   `yaml:"read_only"`
 	Expire        string `yaml:"expire"`
 	RefreshExpire string `yaml:"refresh_expire"`
 
@@ -42,6 +43,7 @@ func (j *JwtConfig) InitDefaults() {
 	j.Secret = ""
 	j.PublicKey = "public.pem"
 	j.PrivateKey = "private.pem"
+	j.ReadOnly = false
 	j.Expire = "1h"
 	j.RefreshExpire = "24h"
 }
@@ -66,23 +68,30 @@ var signMethods = utils.NewEnums(
 	SignMethodRS512,
 )
 
-func (j *JwtConfig) HMACToken() any {
+func (j *JwtConfig) HMACToken(_ bool) any {
 	return []byte(j.SecretContent)
 }
 
-func (j *JwtConfig) RSAToken() any {
-	return j.PrivateKeyContent
+func (j *JwtConfig) RSAToken(encode bool) any {
+	if j.ReadOnly && encode {
+		panic("read only mode")
+	}
+	if encode {
+		return j.PrivateKeyContent
+	} else {
+		return j.PublicKeyContent
+	}
 }
 
 func (j *JwtConfig) GenerateKey(claims *jwt.RegisteredClaims) (string, error) {
-	return jwt.NewWithClaims(j.JWTSignMethod.Data, claims).SignedString(j.JWTTokenFunc())
+	return jwt.NewWithClaims(j.JWTSignMethod.Data, claims).SignedString(j.JWTTokenFunc(true))
 }
 
 func (j *JwtConfig) defaultKeyFunc(token *jwt.Token) (interface{}, error) {
 	if token.Method.Alg() != j.SignMethod {
 		return nil, errors.New("illegal signature methods")
 	}
-	return j.JWTTokenFunc(), nil
+	return j.JWTTokenFunc(false), nil
 }
 
 func (j *JwtConfig) VerifyJwt(jwtString string, claim *jwt.RegisteredClaims) (bool, error) {
@@ -128,10 +137,11 @@ func (j *JwtConfig) verifySignMethod() (bool, error) {
 		} else {
 			j.SecretContent = randstr.String(64)
 		}
+		j.JWTTokenFunc = j.HMACToken
 	case SignMethodRS256:
 	case SignMethodRS384:
 	case SignMethodRS512:
-		if j.PrivateKey == "" {
+		if !j.ReadOnly && j.PrivateKey == "" {
 			return false, fmt.Errorf("private key is empty")
 		}
 		if j.PublicKey == "" {
@@ -147,14 +157,19 @@ func (j *JwtConfig) verifySignMethod() (bool, error) {
 			return false, fmt.Errorf("parse public key failed: %v", err)
 		}
 
-		privateKey, err := os.ReadFile(j.PrivateKey)
-		if err != nil {
-			return false, fmt.Errorf("read private key failed: %v", err)
+		// 如果没有私钥，则不具备签发能力，跳过私钥验证
+		if !j.ReadOnly {
+			privateKey, err := os.ReadFile(j.PrivateKey)
+			if err != nil {
+				return false, fmt.Errorf("read private key failed: %v", err)
+			}
+			j.PrivateKeyContent, err = jwt.ParseRSAPrivateKeyFromPEM(privateKey)
+			if err != nil {
+				j.PrivateKeyContent = nil
+				return false, fmt.Errorf("parse private key failed: %v", err)
+			}
 		}
-		j.PrivateKeyContent, err = jwt.ParseRSAPrivateKeyFromPEM(privateKey)
-		if err != nil {
-			return false, fmt.Errorf("parse private key failed: %v", err)
-		}
+		j.JWTTokenFunc = j.RSAToken
 	}
 	return true, nil
 }

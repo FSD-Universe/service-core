@@ -7,11 +7,12 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"half-nothing.cn/service-core/interfaces/database/entity"
 )
 
 type Claims struct {
 	Uid        uint   `json:"uid"`
-	Cid        int    `json:"cid"`
+	Cid        uint   `json:"cid"`
 	Username   string `json:"username"`
 	Permission uint64 `json:"permission"`
 	Rating     int    `json:"rating"`
@@ -25,17 +26,41 @@ type FsdClaims struct {
 	jwt.RegisteredClaims
 }
 
-type ClaimsFactoryInterface interface {
-	CreateClaims(uid uint, cid int, username string, permission uint64, rating int, flushToken bool) *Claims
-	CreateFsdClaims(controllerRating int, pilotRating int) *FsdClaims
+type ClaimFactoryInterface interface {
+	CreateClaims(user *entity.User, flushToken bool) *Claims
+	CreateFsdClaims(user *entity.User) *FsdClaims
 	GenerateKey(claims *jwt.RegisteredClaims) (string, error)
+	VerifyJwt(jwtString string, claim *jwt.RegisteredClaims) (bool, error)
 }
 
 type ContentSetter interface {
 	SetUid(uid uint)
-	SetCid(cid int)
+	SetCid(cid uint)
 	SetPermission(permission uint64)
 	SetRating(rating int)
+}
+
+type Content struct {
+	Uid        uint
+	Cid        uint
+	Permission uint64
+	Rating     int
+}
+
+func (c *Content) SetUid(uid uint) {
+	c.Uid = uid
+}
+
+func (c *Content) SetCid(cid uint) {
+	c.Cid = cid
+}
+
+func (c *Content) SetPermission(permission uint64) {
+	c.Permission = permission
+}
+
+func (c *Content) SetRating(rating int) {
+	c.Rating = rating
 }
 
 func SetJwtContent[T ContentSetter](data T, ctx echo.Context) error {
