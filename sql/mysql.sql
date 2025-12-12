@@ -148,488 +148,241 @@ CREATE TABLE `flight_plans`
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '飞行计划表';
 
-CREATE TABLE `controller_applications`
-(
-    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `user_id`    INT UNSIGNED NOT NULL COMMENT '用户id',
-    `reason`     TEXT         NOT NULL COMMENT '申请理由',
-    `record`     TEXT         NOT NULL COMMENT '管制经历',
-    `is_guest`   TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '是否为客座',
-    `platform`   VARCHAR(16)  NOT NULL COMMENT '客座平台',
-    `image_id`   INT UNSIGNED NULL     DEFAULT NULL COMMENT '客座证明资料',
-    `status`     INT          NOT NULL DEFAULT 0 COMMENT '申请状态',
-    `message`    TEXT         NULL     DEFAULT NULL COMMENT '回复消息',
-    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    INDEX `idx_controller_applications_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
-    INDEX `idx_controller_applications_image_id` (`image_id`) USING BTREE COMMENT '图片id索引',
-    CONSTRAINT `fk_controller_applications_user_id` FOREIGN KEY (`user_id`)
-        REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    CONSTRAINT `fk_controller_applications_image_id` FOREIGN KEY (`image_id`)
-        REFERENCES `images` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '管制员申请表';
-
 CREATE TABLE `instructors`
 (
     `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
     `user_id`    INT UNSIGNED NOT NULL COMMENT '用户id',
     `email`      VARCHAR(128) NOT NULL COMMENT '教员邮箱',
-    `twr`        INT          NOT NULL DEFAULT 0 COMMENT '塔台教员:0-无, 1
-    -
-    教师, 2
-    -
-    教员
-    ',
-    `app`        INT          NOT NULL DEFAULT 0 COMMENT '
-    进近教员
-    :
-    0
-    -
-    无, 1
-    -
-    教师, 2
-    -
-    教员
-    ',
-    `ctr`        INT          NOT NULL DEFAULT 0 COMMENT '
-    区域教员
-    :
-    0
-    -
-    无, 1
-    -
-    教师, 2
-    -
-    教员
-    ',
-    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    加入时间
-    ',
-    `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    信息更新时间
-    ',
+    `twr`        INT          NOT NULL DEFAULT 0 COMMENT '塔台教员:0-无,1-教师,2-教员',
+    `app`        INT          NOT NULL DEFAULT 0 COMMENT '进近教员:0-无,1-教师,2-教员',
+    `ctr`        INT          NOT NULL DEFAULT 0 COMMENT '区域教员:0-无,1-教师,2-教员',
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入时间',
+    `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '信息更新时间',
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `idx_instructors_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
+    UNIQUE INDEX `idx_instructors_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
     CONSTRAINT `fk_instructors_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    教员信息表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '教员信息表';
+
+CREATE TABLE `controller_applications`
+(
+    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`       INT UNSIGNED NOT NULL COMMENT '用户id',
+    `reason`        TEXT         NOT NULL COMMENT '申请理由',
+    `record`        TEXT         NOT NULL COMMENT '管制经历',
+    `is_guest`      TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '是否为客座',
+    `platform`      VARCHAR(16)  NOT NULL COMMENT '客座平台',
+    `image_id`      INT UNSIGNED NULL     DEFAULT NULL COMMENT '客座证明资料',
+    `status`        INT          NOT NULL DEFAULT 0 COMMENT '申请状态',
+    `message`       TEXT         NULL     DEFAULT NULL COMMENT '回复消息',
+    `instructor_id` INT UNSIGNED NULL     DEFAULT NULL COMMENT '面试教员id',
+    `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX `idx_controller_applications_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_controller_applications_image_id` (`image_id`) USING BTREE COMMENT '图片id索引',
+    INDEX `idx_controller_applications_instructor_id` (`instructor_id`) USING BTREE COMMENT '教员id索引',
+    CONSTRAINT `fk_controller_applications_user_id` FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT `fk_controller_applications_image_id` FOREIGN KEY (`image_id`)
+        REFERENCES `images` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT `fk_controller_applications_instructor_id` FOREIGN KEY (`instructor_id`)
+        REFERENCES `instructors` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '管制员申请表';
+
+CREATE TABLE `controller_application_times`
+(
+    `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `application_id` INT UNSIGNED NOT NULL COMMENT '申请id',
+    `time`           DATETIME     NOT NULL COMMENT '申请时间',
+    `selected`       TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '是否被选中',
+    PRIMARY KEY (`id`),
+    INDEX `idx_controller_application_times_application_id` (`application_id`) USING BTREE COMMENT '申请id索引',
+    CONSTRAINT `fk_controller_application_times_application_id` FOREIGN KEY (`application_id`)
+        REFERENCES `controller_applications` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '管制员申请时间表';
 
 CREATE TABLE `controllers`
 (
-    `id`                    INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `user_id`               INT UNSIGNED    NOT NULL COMMENT '
-    用户id
-    ',
-    `instructor_id`         INT UNSIGNED    NULL     DEFAULT NULL COMMENT '
-    教员id
-    ',
-    `guest`                 TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '
-    是否为客座管制员
-    ',
-    `under_monitor`         TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '
-    是否为实习管制员
-    ',
-    `under_solo`            TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '
-    是否SOLO
-    ',
-    `solo_until`            DATETIME        NULL     DEFAULT NULL COMMENT '
-    SOLO时限
-    ',
-    `tier2`                 TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '
-    是否有程序塔权限
-    ',
-    `total_controller_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '
-    总管制时长
-    ',
-    `created_at`            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    加入时间
-    ',
-    `updated_at`            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    信息更新时间
-    ',
+    `id`                    INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`               INT UNSIGNED    NOT NULL COMMENT '用户id',
+    `instructor_id`         INT UNSIGNED    NULL     DEFAULT NULL COMMENT '教员id',
+    `guest`                 TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否为客座管制员',
+    `under_monitor`         TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否为实习管制员',
+    `under_solo`            TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否SOLO',
+    `solo_until`            DATETIME        NULL     DEFAULT NULL COMMENT 'SOLO时限',
+    `tier2`                 TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否有程序塔权限',
+    `total_controller_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '总管制时长',
+    `created_at`            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入时间',
+    `updated_at`            DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '信息更新时间',
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `idx_controllers_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
-    INDEX `idx_controllers_instructor_id` (`instructor_id`) USING BTREE COMMENT '
-    教员id索引
-    ',
+    UNIQUE INDEX `idx_controllers_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_controllers_instructor_id` (`instructor_id`) USING BTREE COMMENT '教员id索引',
     CONSTRAINT `fk_controllers_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_controllers_instructor_id` FOREIGN KEY (`instructor_id`)
         REFERENCES `instructors` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    管制员表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '管制员表';
 
 CREATE TABLE `controller_records`
 (
-    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `user_id`       INT UNSIGNED NOT NULL COMMENT '
-    用户id
-    ',
-    `instructor_id` INT UNSIGNED NOT NULL COMMENT '
-    教员id
-    ',
-    `type`          INT          NOT NULL DEFAULT 0 COMMENT '
-    履历类型
-    ',
-    `content`       TEXT         NOT NULL COMMENT '
-    履历内容
-    ',
-    `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    记录时间
-    ',
-    `deleted_at`    DATETIME     NULL     DEFAULT NULL COMMENT '
-    软删除
-    ',
+    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`       INT UNSIGNED NOT NULL COMMENT '用户id',
+    `instructor_id` INT UNSIGNED NOT NULL COMMENT '教员id',
+    `type`          INT          NOT NULL DEFAULT 0 COMMENT '履历类型',
+    `content`       TEXT         NOT NULL COMMENT '履历内容',
+    `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录时间',
+    `deleted_at`    DATETIME     NULL     DEFAULT NULL COMMENT '软删除',
     PRIMARY KEY (`id`),
-    INDEX `idx_controller_records_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
-    INDEX `idx_controller_records_instructor_id` (`instructor_id`) USING BTREE COMMENT '
-    教员id索引
-    ',
+    INDEX `idx_controller_records_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_controller_records_instructor_id` (`instructor_id`) USING BTREE COMMENT '教员id索引',
     CONSTRAINT `fk_controller_records_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_controller_records_instructor_id` FOREIGN KEY (`instructor_id`)
         REFERENCES `instructors` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    管制员履历表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '管制员履历表';
 
 CREATE TABLE `tickets`
 (
-    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `user_id`    INT UNSIGNED NOT NULL COMMENT '
-    用户id
-    ',
-    `type`       INT          NOT NULL DEFAULT 0 COMMENT '
-    工单类型
-    ',
-    `title`      TEXT         NOT NULL COMMENT '
-    工单标题
-    ',
-    `content`    TEXT         NOT NULL COMMENT '
-    工单内容
-    ',
-    `reply`      TEXT         NULL     DEFAULT NULL COMMENT '
-    工单回复
-    ',
-    `replier`    INT UNSIGNED NULL     DEFAULT NULL COMMENT '
-    工单回复人id
-    ',
-    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
-    `closed_at`  DATETIME     NULL     DEFAULT NULL COMMENT '
-    工单关闭时间
-    ',
+    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`    INT UNSIGNED NOT NULL COMMENT '用户id',
+    `type`       INT          NOT NULL DEFAULT 0 COMMENT '工单类型',
+    `title`      TEXT         NOT NULL COMMENT '工单标题',
+    `content`    TEXT         NOT NULL COMMENT '工单内容',
+    `reply`      TEXT         NULL     DEFAULT NULL COMMENT '工单回复',
+    `replier`    INT UNSIGNED NULL     DEFAULT NULL COMMENT '工单回复人id',
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `closed_at`  DATETIME     NULL     DEFAULT NULL COMMENT '工单关闭时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_tickets_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
-    INDEX `idx_tickets_replier_id` (`replier`) USING BTREE COMMENT '
-    工单回复人id索引
-    ',
+    INDEX `idx_tickets_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_tickets_replier_id` (`replier`) USING BTREE COMMENT '工单回复人id索引',
     CONSTRAINT `fk_tickets_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_tickets_replier_id` FOREIGN KEY (`replier`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    工单表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '工单表';
 
 CREATE TABLE `activities`
 (
-    `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `publisher_id`      INT UNSIGNED NOT NULL COMMENT '
-    发布者id
-    ',
-    `type`              INT          NOT NULL DEFAULT 0 COMMENT '
-    活动类型
-    ',
-    `title`             TEXT         NOT NULL COMMENT '
-    活动标题
-    ',
-    `image_id`          INT UNSIGNED NULL     DEFAULT NULL COMMENT '
-    活动图片id
-    ',
-    `active_time`       DATETIME     NOT NULL COMMENT '
-    活动时间
-    ',
-    `departure_airport` VARCHAR(64)  NOT NULL COMMENT '
-    离场机场
-    ',
-    `arrival_airport`   VARCHAR(64)  NOT NULL COMMENT '
-    到达机场
-    ',
-    `route`             TEXT         NULL     DEFAULT NULL COMMENT '
-    活动航路
-    ',
-    `distance`          INT          NULL     DEFAULT NULL COMMENT '
-    活动距离
-    ',
-    `second_route`      TEXT         NULL     DEFAULT NULL COMMENT '
-    第二活动航路
-    ',
-    `second_distance`   INT          NULL     DEFAULT NULL COMMENT '
-    第二活动距离
-    ',
-    `open_fir`          VARCHAR(128) NULL     DEFAULT NULL COMMENT '
-    空域开放日
-    ',
-    `status`            INT          NOT NULL DEFAULT 0 COMMENT '
-    活动状态
-    ',
-    `notams`            TEXT         NOT NULL COMMENT '
-    航行通告
-    ',
-    `created_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
-    `updated_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    更新时间
-    ',
-    `deleted_at`        DATETIME     NULL     DEFAULT NULL COMMENT '
-    软删除
-    ',
+    `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `publisher_id`      INT UNSIGNED NOT NULL COMMENT '发布者id',
+    `type`              INT          NOT NULL DEFAULT 0 COMMENT '活动类型',
+    `title`             TEXT         NOT NULL COMMENT '活动标题',
+    `image_id`          INT UNSIGNED NULL     DEFAULT NULL COMMENT '活动图片id',
+    `active_time`       DATETIME     NOT NULL COMMENT '活动时间',
+    `departure_airport` VARCHAR(64)  NOT NULL COMMENT '离场机场',
+    `arrival_airport`   VARCHAR(64)  NOT NULL COMMENT '到达机场',
+    `route`             TEXT         NULL     DEFAULT NULL COMMENT '活动航路',
+    `distance`          INT          NULL     DEFAULT NULL COMMENT '活动距离',
+    `second_route`      TEXT         NULL     DEFAULT NULL COMMENT '第二活动航路',
+    `second_distance`   INT          NULL     DEFAULT NULL COMMENT '第二活动距离',
+    `open_fir`          VARCHAR(128) NULL     DEFAULT NULL COMMENT '空域开放日',
+    `status`            INT          NOT NULL DEFAULT 0 COMMENT '活动状态',
+    `notams`            TEXT         NOT NULL COMMENT '航行通告',
+    `created_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at`        DATETIME     NULL     DEFAULT NULL COMMENT '软删除',
     PRIMARY KEY (`id`),
-    INDEX `idx_activities_publisher_id` (`publisher_id`) USING BTREE COMMENT '
-    发布者id索引
-    ',
-    INDEX `idx_activities_image_id` (`image_id`) USING BTREE COMMENT '
-    图片id索引
-    ',
+    INDEX `idx_activities_publisher_id` (`publisher_id`) USING BTREE COMMENT '发布者id索引',
+    INDEX `idx_activities_image_id` (`image_id`) USING BTREE COMMENT '图片id索引',
     CONSTRAINT `fk_activities_publisher_id` FOREIGN KEY (`publisher_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activities_image_id` FOREIGN KEY (`image_id`)
         REFERENCES `images` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    活动表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '活动表';
 
 CREATE TABLE `activity_pilots`
 (
-    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `user_id`     INT UNSIGNED NOT NULL COMMENT '
-    飞行员id
-    ',
-    `activity_id` INT UNSIGNED NOT NULL COMMENT '
-    活动id
-    ',
-    `callsign`    VARCHAR(64)  NOT NULL COMMENT '
-    呼号
-    ',
-    `aircraft`    VARCHAR(64)  NOT NULL COMMENT '
-    机型
-    ',
-    `status`      INT          NOT NULL DEFAULT 0 COMMENT '
-    飞行员状态
-    ',
-    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    报名时间
-    ',
-    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    更新时间
-    ',
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`     INT UNSIGNED NOT NULL COMMENT '飞行员id',
+    `activity_id` INT UNSIGNED NOT NULL COMMENT '活动id',
+    `callsign`    VARCHAR(64)  NOT NULL COMMENT '呼号',
+    `aircraft`    VARCHAR(64)  NOT NULL COMMENT '机型',
+    `status`      INT          NOT NULL DEFAULT 0 COMMENT '飞行员状态',
+    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '报名时间',
+    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_activity_pilots_activity_id` (`activity_id`) USING BTREE COMMENT '
-    活动id索引
-    ',
-    INDEX `idx_activity_pilots_user_id` (`user_id`) USING BTREE COMMENT '
-    飞行员id索引
-    ',
+    INDEX `idx_activity_pilots_activity_id` (`activity_id`) USING BTREE COMMENT '活动id索引',
+    INDEX `idx_activity_pilots_user_id` (`user_id`) USING BTREE COMMENT '飞行员id索引',
     CONSTRAINT `fk_activity_pilots_activity_id` FOREIGN KEY (`activity_id`)
         REFERENCES `activities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activity_pilots_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    活动飞行员表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '活动飞行员表';
 
 CREATE TABLE `activity_facilities`
 (
-    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `activity_id` INT UNSIGNED NOT NULL COMMENT '
-    活动id
-    ',
-    `min_rating`  INT          NOT NULL DEFAULT 0 COMMENT '
-    最低等级
-    ',
-    `callsign`    VARCHAR(32)  NOT NULL COMMENT '
-    呼号
-    ',
-    `frequency`   VARCHAR(32)  NOT NULL COMMENT '
-    频率
-    ',
-    `tier2`       TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '
-    是否为程序塔台
-    ',
-    `sort_index`  INT          NOT NULL DEFAULT 0 COMMENT '
-    排序索引
-    ',
-    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
-    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    更新时间
-    ',
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `activity_id` INT UNSIGNED NOT NULL COMMENT '活动id',
+    `min_rating`  INT          NOT NULL DEFAULT 0 COMMENT '最低等级',
+    `callsign`    VARCHAR(32)  NOT NULL COMMENT '呼号',
+    `frequency`   VARCHAR(32)  NOT NULL COMMENT '频率',
+    `tier2`       TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '是否为程序塔台',
+    `sort_index`  INT          NOT NULL DEFAULT 0 COMMENT '排序索引',
+    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_activity_facilities_activity_id` (`activity_id`) USING BTREE COMMENT '
-    活动id索引
-    ',
+    INDEX `idx_activity_facilities_activity_id` (`activity_id`) USING BTREE COMMENT '活动id索引',
     CONSTRAINT `fk_activity_facilities_activity_id` FOREIGN KEY (`activity_id`)
         REFERENCES `activities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    活动席位表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '活动席位表';
 
 CREATE TABLE `activity_controllers`
 (
-    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `user_id`     INT UNSIGNED NOT NULL COMMENT '
-    用户id
-    ',
-    `activity_id` INT UNSIGNED NOT NULL COMMENT '
-    活动id
-    ',
-    `facility_id` INT UNSIGNED NOT NULL COMMENT '
-    活动席位id
-    ',
-    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `user_id`     INT UNSIGNED NOT NULL COMMENT '用户id',
+    `activity_id` INT UNSIGNED NOT NULL COMMENT '活动id',
+    `facility_id` INT UNSIGNED NOT NULL COMMENT '活动席位id',
+    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_activity_controllers_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
-    INDEX `idx_activity_controllers_activity_id` (`activity_id`) USING BTREE COMMENT '
-    活动id索引
-    ',
-    INDEX `idx_activity_controllers_facility_id` (`facility_id`) USING BTREE COMMENT '
-    活动席位id索引
-    ',
+    INDEX `idx_activity_controllers_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
+    INDEX `idx_activity_controllers_activity_id` (`activity_id`) USING BTREE COMMENT '活动id索引',
+    INDEX `idx_activity_controllers_facility_id` (`facility_id`) USING BTREE COMMENT '活动席位id索引',
     CONSTRAINT `fk_activity_controllers_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activity_controllers_activity_id` FOREIGN KEY (`activity_id`)
         REFERENCES `activities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activity_controllers_facility_id` FOREIGN KEY (`facility_id`)
         REFERENCES `activity_facilities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '
-    活动管制员表
-    ';
+) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '活动管制员表';
 
 CREATE TABLE `activity_records`
 (
-    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `activity_id` INT UNSIGNED NOT NULL COMMENT '
-    活动id
-    ',
-    `user_id`     INT UNSIGNED NOT NULL COMMENT '
-    用户id
-    ',
-    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
+    `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `activity_id` INT UNSIGNED NOT NULL COMMENT '活动id',
+    `user_id`     INT UNSIGNED NOT NULL COMMENT '用户id',
+    `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_activity_records_activity_id` (`activity_id`) USING BTREE COMMENT '
-    活动id索引
-    ',
-    INDEX `idx_activity_records_user_id` (`user_id`) USING BTREE COMMENT '
-    用户id索引
-    ',
+    INDEX `idx_activity_records_activity_id` (`activity_id`) USING BTREE COMMENT '活动id索引',
+    INDEX `idx_activity_records_user_id` (`user_id`) USING BTREE COMMENT '用户id索引',
     CONSTRAINT `fk_activity_records_activity_id` FOREIGN KEY (`activity_id`)
         REFERENCES `activities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activity_records_user_id` FOREIGN KEY (`user_id`)
         REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = innodb CHARACTER SET `utf8mb4` COLLATE `utf8mb4_general_ci` COMMENT = '
-    活动记录表
-    ';
+) ENGINE = innodb CHARACTER SET `utf8mb4` COLLATE `utf8mb4_general_ci` COMMENT = '活动记录表';
 
 CREATE TABLE `activity_coordinations`
 (
-    `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '
-    主键
-    ',
-    `activity_id`       INT UNSIGNED NOT NULL COMMENT '
-    活动id
-    ',
-    `facility_id`       INT UNSIGNED NOT NULL COMMENT '
-    活动席位id
-    ',
-    `logon_code`        VARCHAR(8)   NULL     DEFAULT NULL COMMENT '
-    CPDLC
-    /
-    DCL识别码
-    ',
-    `logon_network`     VARCHAR(64)  NULL     DEFAULT NULL COMMENT '
-    CPDLC
-    /
-    DCL登陆网络
-    ',
-    `pdc_available`     TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT '
-    PDC是否可用
-    ',
-    `transform`         VARCHAR(64)  NULL     DEFAULT NULL COMMENT '
-    移交席位
-    ',
-    `transform_remarks` TEXT         NULL     DEFAULT NULL COMMENT '
-    移交备注
-    ',
-    `procedure`         VARCHAR(64)  NULL     DEFAULT NULL COMMENT '
-    程序
-    ',
-    `runway`            VARCHAR(64)  NULL     DEFAULT NULL COMMENT '
-    跑道
-    ',
-    `runway_remarks`    TEXT         NULL     DEFAULT NULL COMMENT '
-    跑道运行备注
-    ',
-    `altitude`          VARCHAR(64)  NULL     DEFAULT NULL COMMENT '
-    起始高度
-    ',
-    `remarks`           TEXT         NULL     DEFAULT NULL COMMENT '
-    其他备注信息
-    ',
-    `created_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    创建时间
-    ',
-    `updated_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '
-    更新时间
-    ',
+    `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `activity_id`       INT UNSIGNED NOT NULL COMMENT '活动id',
+    `facility_id`       INT UNSIGNED NOT NULL COMMENT '活动席位id',
+    `logon_code`        VARCHAR(8)   NULL     DEFAULT NULL COMMENT 'CPDLC/DCL识别码',
+    `logon_network`     VARCHAR(64)  NULL     DEFAULT NULL COMMENT 'CPDLC/DCL登陆网络',
+    `pdc_available`     TINYINT(1)   NOT NULL DEFAULT FALSE COMMENT 'PDC是否可用',
+    `transform`         VARCHAR(64)  NULL     DEFAULT NULL COMMENT '移交席位',
+    `transform_remarks` TEXT         NULL     DEFAULT NULL COMMENT '移交备注',
+    `procedure`         VARCHAR(64)  NULL     DEFAULT NULL COMMENT '程序',
+    `runway`            VARCHAR(64)  NULL     DEFAULT NULL COMMENT '跑道',
+    `runway_remarks`    TEXT         NULL     DEFAULT NULL COMMENT '跑道运行备注',
+    `altitude`          VARCHAR(64)  NULL     DEFAULT NULL COMMENT '起始高度',
+    `remarks`           TEXT         NULL     DEFAULT NULL COMMENT '其他备注信息',
+    `created_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    INDEX `idx_activity_coordinations_activity_id` (`activity_id`) USING BTREE COMMENT '
-    活动id索引
-    ',
-    INDEX `idx_activity_coordinations_facility_id` (`facility_id`) USING BTREE COMMENT '
-    活动席位id索引
-    ',
+    INDEX `idx_activity_coordinations_activity_id` (`activity_id`) USING BTREE COMMENT '活动id索引',
+    INDEX `idx_activity_coordinations_facility_id` (`facility_id`) USING BTREE COMMENT '活动席位id索引',
     CONSTRAINT `fk_activity_coordinations_activity_id` FOREIGN KEY (`activity_id`)
         REFERENCES `activities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `fk_activity_coordinations_facility_id` FOREIGN KEY (`facility_id`)
         REFERENCES `activity_facilities` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = innodb CHARACTER SET `utf8mb4` COLLATE `utf8mb4_general_ci` COMMENT = '
-    活动协调表
-    ';
+) ENGINE = innodb CHARACTER SET `utf8mb4` COLLATE `utf8mb4_general_ci` COMMENT = '活动协调表';

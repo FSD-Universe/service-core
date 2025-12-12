@@ -265,45 +265,6 @@ ALTER TABLE "flight_plans"
     ADD CONSTRAINT "fk_flight_plans_user_id" FOREIGN KEY ("user_id")
         REFERENCES "users" ("id") ON DELETE RESTRICT;
 
--- 管制员申请表
-CREATE TABLE "controller_applications"
-(
-    "id"         BIGSERIAL PRIMARY KEY,
-    "user_id"    BIGINT      NOT NULL,
-    "reason"     TEXT        NOT NULL,
-    "record"     TEXT        NOT NULL,
-    "is_guest"   BOOLEAN     NOT NULL DEFAULT FALSE,
-    "platform"   VARCHAR(16) NOT NULL,
-    "image_id"   BIGINT      NULL     DEFAULT NULL,
-    "status"     INTEGER     NOT NULL DEFAULT 0,
-    "message"    TEXT        NULL     DEFAULT NULL,
-    "created_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
-);
-
-COMMENT ON TABLE "controller_applications" IS '管制员申请表';
-COMMENT ON COLUMN "controller_applications"."id" IS '主键';
-COMMENT ON COLUMN "controller_applications"."user_id" IS '用户id';
-COMMENT ON COLUMN "controller_applications"."reason" IS '申请理由';
-COMMENT ON COLUMN "controller_applications"."record" IS '管制经历';
-COMMENT ON COLUMN "controller_applications"."is_guest" IS '是否为客座';
-COMMENT ON COLUMN "controller_applications"."platform" IS '客座平台';
-COMMENT ON COLUMN "controller_applications"."image_id" IS '客座证明资料';
-COMMENT ON COLUMN "controller_applications"."status" IS '申请状态';
-COMMENT ON COLUMN "controller_applications"."message" IS '回复消息';
-COMMENT ON COLUMN "controller_applications"."created_at" IS '创建时间';
-COMMENT ON COLUMN "controller_applications"."updated_at" IS '更新时间';
-
-CREATE INDEX "idx_controller_applications_user_id" ON "controller_applications" ("user_id");
-CREATE INDEX "idx_controller_applications_image_id" ON "controller_applications" ("image_id");
-
-ALTER TABLE "controller_applications"
-    ADD CONSTRAINT "fk_controller_application_user_id" FOREIGN KEY ("user_id")
-        REFERENCES "users" ("id") ON DELETE RESTRICT;
-ALTER TABLE "controller_applications"
-    ADD CONSTRAINT "fk_controller_application_image_id" FOREIGN KEY ("image_id")
-        REFERENCES "images" ("id") ON DELETE RESTRICT;
-
 -- 教员信息表
 CREATE TABLE "instructors"
 (
@@ -332,6 +293,71 @@ CREATE UNIQUE INDEX "idx_instructors_user_id" ON "instructors" ("user_id");
 ALTER TABLE "instructors"
     ADD CONSTRAINT "fk_instructor_user_id" FOREIGN KEY ("user_id")
         REFERENCES "users" ("id") ON DELETE RESTRICT;
+
+
+-- 管制员申请表
+CREATE TABLE "controller_applications"
+(
+    "id"            BIGSERIAL PRIMARY KEY,
+    "user_id"       BIGINT      NOT NULL,
+    "reason"        TEXT        NOT NULL,
+    "record"        TEXT        NOT NULL,
+    "is_guest"      BOOLEAN     NOT NULL DEFAULT FALSE,
+    "platform"      VARCHAR(16) NOT NULL,
+    "image_id"      BIGINT      NULL     DEFAULT NULL,
+    "status"        INTEGER     NOT NULL DEFAULT 0,
+    "message"       TEXT        NULL     DEFAULT NULL,
+    "instructor_id" BIGINT      NULL,
+    "created_at"    TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"    TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE "controller_applications" IS '管制员申请表';
+COMMENT ON COLUMN "controller_applications"."id" IS '主键';
+COMMENT ON COLUMN "controller_applications"."user_id" IS '用户id';
+COMMENT ON COLUMN "controller_applications"."reason" IS '申请理由';
+COMMENT ON COLUMN "controller_applications"."record" IS '管制经历';
+COMMENT ON COLUMN "controller_applications"."is_guest" IS '是否为客座';
+COMMENT ON COLUMN "controller_applications"."platform" IS '客座平台';
+COMMENT ON COLUMN "controller_applications"."image_id" IS '客座证明资料';
+COMMENT ON COLUMN "controller_applications"."status" IS '申请状态';
+COMMENT ON COLUMN "controller_applications"."message" IS '回复消息';
+COMMENT ON COLUMN "controller_applications"."created_at" IS '创建时间';
+COMMENT ON COLUMN "controller_applications"."updated_at" IS '更新时间';
+
+CREATE INDEX "idx_controller_applications_user_id" ON "controller_applications" ("user_id");
+CREATE INDEX "idx_controller_applications_image_id" ON "controller_applications" ("image_id");
+CREATE INDEX "idx_controller_applications_instructor_id" ON "controller_applications" ("instructor_id");
+
+ALTER TABLE "controller_applications"
+    ADD CONSTRAINT "fk_controller_application_user_id" FOREIGN KEY ("user_id")
+        REFERENCES "users" ("id") ON DELETE RESTRICT;
+ALTER TABLE "controller_applications"
+    ADD CONSTRAINT "fk_controller_application_image_id" FOREIGN KEY ("image_id")
+        REFERENCES "images" ("id") ON DELETE RESTRICT;
+ALTER TABLE "controller_applications"
+    ADD CONSTRAINT "fk_controller_application_instructor_id" FOREIGN KEY ("instructor_id")
+        REFERENCES "instructors" ("id") ON DELETE RESTRICT;
+
+CREATE TABLE "controller_application_times"
+(
+    "id"             BIGSERIAL PRIMARY KEY,
+    "application_id" BIGINT    NOT NULL,
+    "time"           TIMESTAMP NOT NULL,
+    "selected"       BOOLEAN   NOT NULL DEFAULT FALSE
+);
+
+COMMENT ON TABLE "controller_application_times" IS '管制员申请时间表';
+COMMENT ON COLUMN "controller_application_times"."id" IS '主键';
+COMMENT ON COLUMN "controller_application_times"."application_id" IS '申请id';
+COMMENT ON COLUMN "controller_application_times"."time" IS '申请时间';
+COMMENT ON COLUMN "controller_application_times"."selected" IS '是否被选中';
+
+CREATE INDEX "idx_controller_application_times_application_id" ON "controller_application_times" ("application_id");
+
+ALTER TABLE "controller_application_times"
+    ADD CONSTRAINT "fk_controller_application_times_application_id" FOREIGN KEY ("application_id")
+        REFERENCES "controller_applications" ("id") ON DELETE RESTRICT;
 
 -- 管制员表
 CREATE TABLE "controllers"

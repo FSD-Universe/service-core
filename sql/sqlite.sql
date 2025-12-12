@@ -155,29 +155,6 @@ CREATE TABLE `flight_plans`
 CREATE UNIQUE INDEX `idx_flight_plans_user_id` ON `flight_plans` (`user_id`);
 CREATE INDEX `idx_flight_plans_callsign` ON `flight_plans` (`callsign`);
 
--- 管制员申请表
-CREATE TABLE `controller_applications`
-(
-    `id`         INTEGER PRIMARY KEY AUTOINCREMENT,          -- 主键
-    `user_id`    INTEGER NOT NULL,                           -- 用户id
-    `reason`     TEXT    NOT NULL,                           -- 申请理由
-    `record`     TEXT    NOT NULL,                           -- 管制经历
-    `is_guest`   INTEGER NOT NULL DEFAULT FALSE,             -- 是否为客座
-    `platform`   TEXT    NOT NULL,                           -- 客座平台
-    `image_id`   INTEGER,                                    -- 客座证明资料
-    `status`     INTEGER NOT NULL DEFAULT 0,                 -- 申请状态
-    `message`    TEXT,                                       -- 回复消息
-    `created_at` TEXT             DEFAULT CURRENT_TIMESTAMP, -- 创建时间
-    `updated_at` TEXT             DEFAULT CURRENT_TIMESTAMP, -- 更新时间
-    FOREIGN KEY (`user_id`)
-        REFERENCES `users` (`id`) ON DELETE RESTRICT,
-    FOREIGN KEY (`image_id`)
-        REFERENCES `images` (`id`) ON DELETE RESTRICT
-);
-
-CREATE INDEX `idx_controller_applications_user_id` ON `controller_applications` (`user_id`);
-CREATE INDEX `idx_controller_applications_image_id` ON `controller_applications` (`image_id`);
-
 -- 教员信息表
 CREATE TABLE `instructors`
 (
@@ -194,6 +171,46 @@ CREATE TABLE `instructors`
 );
 
 CREATE UNIQUE INDEX `idx_instructors_user_id` ON `instructors` (`user_id`);
+
+-- 管制员申请表
+CREATE TABLE `controller_applications`
+(
+    `id`            INTEGER PRIMARY KEY AUTOINCREMENT,          -- 主键
+    `user_id`       INTEGER NOT NULL,                           -- 用户id
+    `reason`        TEXT    NOT NULL,                           -- 申请理由
+    `record`        TEXT    NOT NULL,                           -- 管制经历
+    `is_guest`      INTEGER NOT NULL DEFAULT FALSE,             -- 是否为客座
+    `platform`      TEXT    NOT NULL,                           -- 客座平台
+    `image_id`      INTEGER,                                    -- 客座证明资料
+    `status`        INTEGER NOT NULL DEFAULT 0,                 -- 申请状态
+    `message`       TEXT,                                       -- 回复消息
+    `instructor_id` INTEGER,                                    -- 教员id
+    `created_at`    TEXT             DEFAULT CURRENT_TIMESTAMP, -- 创建时间
+    `updated_at`    TEXT             DEFAULT CURRENT_TIMESTAMP, -- 更新时间
+    FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`image_id`)
+        REFERENCES `images` (`id`) ON DELETE RESTRICT,
+    FOREIGN KEY (`instructor_id`)
+        REFERENCES `instructors` (`id`) ON DELETE RESTRICT
+);
+
+CREATE INDEX `idx_controller_applications_user_id` ON `controller_applications` (`user_id`);
+CREATE INDEX `idx_controller_applications_image_id` ON `controller_applications` (`image_id`);
+CREATE INDEX `idx_controller_applications_status` ON `controller_applications` (`status`);
+
+-- 管制申请时间表
+CREATE TABLE `controller_application_times`
+(
+    `id`             INTEGER PRIMARY KEY AUTOINCREMENT, -- 主键
+    `application_id` INTEGER NOT NULL,                  -- 申请id
+    `time`           TEXT    NOT NULL,                  -- 申请时间
+    `selected`       INTEGER NOT NULL DEFAULT FALSE,    -- 是否被选中
+    FOREIGN KEY (`application_id`)
+        REFERENCES `controller_applications` (`id`) ON DELETE RESTRICT
+);
+
+CREATE INDEX `idx_controller_application_times_application_id` ON `controller_application_times` (`application_id`);
 
 -- 管制员表
 CREATE TABLE `controllers`
