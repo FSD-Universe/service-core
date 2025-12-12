@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/database/entity"
 )
 
@@ -36,6 +37,7 @@ type ClaimFactoryInterface interface {
 	CreateFsdClaim(user *entity.User) *FsdClaims
 	GenerateKey(claims jwt.Claims) (string, error)
 	VerifyJwt(jwtString string, claim jwt.Claims) (bool, error)
+	GetJWTConfig() *config.JwtConfig
 }
 
 type ContentSetter interface {

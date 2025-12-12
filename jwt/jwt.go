@@ -70,3 +70,7 @@ func (f *ClaimFactory) CreateFsdClaim(user *entity.User) *FsdClaims {
 		},
 	}
 }
+
+func (f *ClaimFactory) GetJWTConfig() *c.JwtConfig {
+	return f.JwtConfig
+}
