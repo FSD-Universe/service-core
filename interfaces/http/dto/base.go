@@ -58,3 +58,26 @@ func NewApiResponse[T any](codeStatus *ApiStatus, data T) *ApiResponse[T] {
 		Data:     data,
 	}
 }
+
+type HttpContentSetter interface {
+	SetIp(ip string)
+	SetUserAgent(userAgent string)
+}
+
+type HttpContent struct {
+	Ip        string
+	UserAgent string
+}
+
+func (content *HttpContent) SetIp(ip string) {
+	content.Ip = ip
+}
+
+func (content *HttpContent) SetUserAgent(userAgent string) {
+	content.UserAgent = userAgent
+}
+
+func SetHttpContent[T HttpContentSetter](data T, ctx echo.Context) {
+	data.SetIp(ctx.RealIP())
+	data.SetUserAgent(ctx.Request().UserAgent())
+}
