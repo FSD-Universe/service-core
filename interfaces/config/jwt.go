@@ -5,7 +5,6 @@ package config
 
 import (
 	"crypto/rsa"
-	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -89,7 +88,7 @@ func (j *JwtConfig) GenerateKey(claims jwt.Claims) (string, error) {
 
 func (j *JwtConfig) defaultKeyFunc(token *jwt.Token) (interface{}, error) {
 	if token.Method.Alg() != j.SignMethod {
-		return nil, errors.New("illegal signature methods")
+		return nil, jwt.ErrSignatureInvalid
 	}
 	return j.JWTTokenFunc(false), nil
 }

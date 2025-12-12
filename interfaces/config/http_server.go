@@ -3,7 +3,11 @@
 // Package config
 package config
 
-import "fmt"
+import (
+	"fmt"
+
+	"half-nothing.cn/service-core/utils"
+)
 
 type HSTSConfig struct {
 	Enable            bool `yaml:"enable"`
@@ -69,6 +73,9 @@ type HttpServerConfig struct {
 	ProxyType int        `yaml:"proxy_type"`
 	TrustIps  []string   `yaml:"trust_ips"`
 	SSLConfig *SSLConfig `yaml:"ssl"`
+
+	// 内部变量
+	Type ProxyType `yaml:"-"`
 }
 
 func (h *HttpServerConfig) InitDefaults() {
@@ -96,9 +103,10 @@ func (h *HttpServerConfig) Verify() (bool, error) {
 	if h.Port > 65535 {
 		return false, fmt.Errorf("port must less than 65535")
 	}
-	if h.ProxyType < 0 || h.ProxyType > 2 {
+	if !ProxyTypes.IsValidEnum(h.ProxyType) {
 		return false, fmt.Errorf("proxy_type must be 0, 1 or 2")
 	}
+	h.Type = ProxyTypes.GetEnum(h.ProxyType)
 	if h.RateLimit < 0 {
 		return false, fmt.Errorf("rate_limit must be positive")
 	}
@@ -107,3 +115,17 @@ func (h *HttpServerConfig) Verify() (bool, error) {
 	}
 	return true, nil
 }
+
+type ProxyType *utils.Enum[int, string]
+
+var (
+	ProxyTypeDirect       = utils.NewEnum[int, string](0, "direct")
+	ProxyTypeXFFHeader    = utils.NewEnum[int, string](1, "header")
+	ProxyTypeRealIPHeader = utils.NewEnum[int, string](2, "real_ip_header")
+)
+
+var ProxyTypes = utils.NewEnums[int, string](
+	ProxyTypeDirect,
+	ProxyTypeXFFHeader,
+	ProxyTypeRealIPHeader,
+)
