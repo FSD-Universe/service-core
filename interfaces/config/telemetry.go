@@ -9,13 +9,16 @@ package config
 import "fmt"
 
 type TelemetryConfig struct {
-	Enable           bool   `yaml:"enable"`
-	Name             string `yaml:"name"`
-	Endpoint         string `yaml:"endpoint"`
-	Token            string `yaml:"token"`
-	ServiceName      string `yaml:"service_name"`
-	HostName         string `yaml:"host_name"`
-	DatabaseTracking bool   `yaml:"database_tracking"`
+	Enable          bool   `yaml:"enable"`
+	Name            string `yaml:"name"`
+	Endpoint        string `yaml:"endpoint"`
+	Token           string `yaml:"token"`
+	ServiceName     string `yaml:"service_name"`
+	HostName        string `yaml:"host_name"`
+	DatabaseTrace   bool   `yaml:"database_trace"`
+	GrpcServerTrace bool   `yaml:"grpc_server_trace"`
+	GrpcClientTrace bool   `yaml:"grpc_client_trace"`
+	HttpServerTrace bool   `yaml:"http_server_trace"`
 }
 
 func (t *TelemetryConfig) InitDefaults() {
@@ -25,11 +28,15 @@ func (t *TelemetryConfig) InitDefaults() {
 	t.Token = ""
 	t.ServiceName = "service"
 	t.HostName = "localhost"
-	t.DatabaseTracking = false
+	t.DatabaseTrace = false
+	t.GrpcServerTrace = false
+	t.GrpcClientTrace = false
+	t.HttpServerTrace = false
 }
 
 func (t *TelemetryConfig) Verify() (bool, error) {
 	if !t.Enable {
+		t.InitDefaults()
 		return true, nil
 	}
 	if t.Name == "" {
