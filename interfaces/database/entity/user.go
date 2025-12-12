@@ -16,7 +16,8 @@ type User struct {
 	Password       string       `gorm:"size:128;not null"`
 	ImageId        *uint        `gorm:"default:null"`
 	QQ             *string      `gorm:"size:16;default:null"`
-	Banned         sql.NullTime `gorm:"default:null"`
+	Banned         bool         `gorm:"default:false;not null"`
+	BannedUntil    sql.NullTime `gorm:"default:null"`
 	Rating         int          `gorm:"default:0;not null"`
 	Permission     uint64       `gorm:"default:0;not null"`
 	TotalPilotTime uint64       `gorm:"default:0;not null"`
