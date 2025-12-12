@@ -83,7 +83,7 @@ func (j *JwtConfig) RSAToken(encode bool) any {
 	}
 }
 
-func (j *JwtConfig) GenerateKey(claims *jwt.RegisteredClaims) (string, error) {
+func (j *JwtConfig) GenerateKey(claims jwt.Claims) (string, error) {
 	return jwt.NewWithClaims(j.JWTSignMethod.Data, claims).SignedString(j.JWTTokenFunc(true))
 }
 
@@ -94,13 +94,13 @@ func (j *JwtConfig) defaultKeyFunc(token *jwt.Token) (interface{}, error) {
 	return j.JWTTokenFunc(false), nil
 }
 
-func (j *JwtConfig) VerifyJwt(jwtString string, claim *jwt.RegisteredClaims) (bool, error) {
+func (j *JwtConfig) VerifyJwt(jwtString string, claim jwt.Claims) (bool, error) {
 	parseClaim, err := jwt.ParseWithClaims(jwtString, claim, j.defaultKeyFunc)
 	if err != nil {
 		return false, err
 	}
-	claim, ok := parseClaim.Claims.(*jwt.RegisteredClaims)
-	return ok, nil
+	claim = parseClaim.Claims
+	return true, nil
 }
 
 func (j *JwtConfig) Verify() (bool, error) {
@@ -130,7 +130,9 @@ func (j *JwtConfig) verifySignMethod() (bool, error) {
 	j.JWTSignMethod = signMethods.GetEnum(j.SignMethod)
 	switch j.JWTSignMethod {
 	case SignMethodHS256:
+		fallthrough
 	case SignMethodHS384:
+		fallthrough
 	case SignMethodHS512:
 		if j.Secret != "" {
 			j.SecretContent = j.Secret
@@ -139,7 +141,9 @@ func (j *JwtConfig) verifySignMethod() (bool, error) {
 		}
 		j.JWTTokenFunc = j.HMACToken
 	case SignMethodRS256:
+		fallthrough
 	case SignMethodRS384:
+		fallthrough
 	case SignMethodRS512:
 		if !j.ReadOnly && j.PrivateKey == "" {
 			return false, fmt.Errorf("private key is empty")

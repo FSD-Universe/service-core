@@ -11,21 +11,29 @@ import (
 )
 
 type ClaimFactory struct {
-	config *c.JwtConfig
+	*c.JwtConfig
 }
 
 func NewClaimFactory(config *c.JwtConfig) *ClaimFactory {
 	return &ClaimFactory{
-		config: config,
+		JwtConfig: config,
 	}
 }
 
-func (f *ClaimFactory) CreateClaims(user *entity.User, flushToken bool) *Claims {
+func (f *ClaimFactory) EmptyClaim() *Claims {
+	return &Claims{}
+}
+
+func (f *ClaimFactory) EmptyFsdClaim() *FsdClaims {
+	return &FsdClaims{}
+}
+
+func (f *ClaimFactory) CreateClaim(user *entity.User, flushToken bool) *Claims {
 	var expiredDuration time.Duration
 	if flushToken {
-		expiredDuration = f.config.RefreshExpireDuration
+		expiredDuration = f.JwtConfig.RefreshExpireDuration
 	} else {
-		expiredDuration = f.config.ExpireDuration
+		expiredDuration = f.JwtConfig.ExpireDuration
 	}
 	now := time.Now()
 	return &Claims{
@@ -36,7 +44,7 @@ func (f *ClaimFactory) CreateClaims(user *entity.User, flushToken bool) *Claims 
 		Rating:     user.Rating,
 		FlushToken: flushToken,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    f.config.Issuer,
+			Issuer:    f.JwtConfig.Issuer,
 			Subject:   user.Username,
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
@@ -45,25 +53,17 @@ func (f *ClaimFactory) CreateClaims(user *entity.User, flushToken bool) *Claims 
 	}
 }
 
-func (f *ClaimFactory) CreateFsdClaims(user *entity.User) *FsdClaims {
+func (f *ClaimFactory) CreateFsdClaim(user *entity.User) *FsdClaims {
 	now := time.Now()
 	return &FsdClaims{
 		ControllerRating: user.Rating,
 		PilotRating:      user.Rating,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    f.config.Issuer,
+			Issuer:    f.JwtConfig.Issuer,
 			Subject:   user.Username,
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
-			ExpiresAt: jwt.NewNumericDate(now.Add(f.config.ExpireDuration)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(f.JwtConfig.ExpireDuration)),
 		},
 	}
-}
-
-func (f *ClaimFactory) GenerateKey(claims *jwt.RegisteredClaims) (string, error) {
-	return f.config.GenerateKey(claims)
-}
-
-func (f *ClaimFactory) VerifyJwt(jwtString string, claim *jwt.RegisteredClaims) (bool, error) {
-	return f.config.VerifyJwt(jwtString, claim)
 }

@@ -27,10 +27,15 @@ type FsdClaims struct {
 }
 
 type ClaimFactoryInterface interface {
-	CreateClaims(user *entity.User, flushToken bool) *Claims
-	CreateFsdClaims(user *entity.User) *FsdClaims
-	GenerateKey(claims *jwt.RegisteredClaims) (string, error)
-	VerifyJwt(jwtString string, claim *jwt.RegisteredClaims) (bool, error)
+	EmptyClaim() *Claims
+	EmptyFsdClaim() *FsdClaims
+	CreateClaim(user *entity.User, flushToken bool) *Claims
+	CreateFsdClaim(user *entity.User) *FsdClaims
+}
+
+type TokenFactoryInterface interface {
+	GenerateKey(claims jwt.Claims) (string, error)
+	VerifyJwt(jwtString string, claim jwt.Claims) (bool, error)
 }
 
 type ContentSetter interface {
