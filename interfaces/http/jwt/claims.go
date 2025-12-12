@@ -31,9 +31,6 @@ type ClaimFactoryInterface interface {
 	EmptyFsdClaim() *FsdClaims
 	CreateClaim(user *entity.User, flushToken bool) *Claims
 	CreateFsdClaim(user *entity.User) *FsdClaims
-}
-
-type TokenFactoryInterface interface {
 	GenerateKey(claims jwt.Claims) (string, error)
 	VerifyJwt(jwtString string, claim jwt.Claims) (bool, error)
 }
