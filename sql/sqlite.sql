@@ -8,6 +8,7 @@ CREATE TABLE `users`
     `password`         TEXT    NOT NULL,                           -- 用户密码(bcrypt加密)
     `image_id`         INTEGER,                                    -- 用户头像索引
     `qq`               TEXT,                                       -- 用户QQ
+    `banned`           TEXT,
     `rating`           INTEGER NOT NULL DEFAULT 0,                 -- 用户管制权限
     `permission`       INTEGER NOT NULL DEFAULT 0,                 -- 用户飞控权限
     `total_pilot_time` INTEGER NOT NULL DEFAULT 0,                 -- 用户连线时间

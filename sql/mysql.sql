@@ -7,6 +7,7 @@ CREATE TABLE `users`
     `password`         VARCHAR(128)    NOT NULL COMMENT '用户密码(bcrypt加密)',
     `image_id`         INT UNSIGNED    NULL     DEFAULT NULL COMMENT '用户头像索引',
     `qq`               VARCHAR(16)     NULL     DEFAULT NULL COMMENT '用户QQ',
+    `banned`           DATETIME        NULL     DEFAULT NULL COMMENT '用户封禁时间',
     `rating`           INT             NOT NULL DEFAULT 0 COMMENT '用户管制权限',
     `permission`       BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户飞控权限',
     `total_pilot_time` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户连线时间',

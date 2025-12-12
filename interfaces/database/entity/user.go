@@ -9,18 +9,19 @@ import (
 )
 
 type User struct {
-	ID             uint          `gorm:"primarykey"`
-	Username       string        `gorm:"uniqueIndex:idx_users_username;size:64;not null"`
-	Email          string        `gorm:"uniqueIndex:idx_users_email;size:128;not null"`
-	Cid            uint          `gorm:"uniqueIndex:idx_users_cid;not null"`
-	Password       string        `gorm:"size:128;not null"`
-	ImageId        *uint         `gorm:"default:null"`
-	QQ             *string       `gorm:"size:16;default:null"`
-	Rating         int           `gorm:"default:0;not null"`
-	Permission     uint64        `gorm:"default:0;not null"`
-	TotalPilotTime uint64        `gorm:"default:0;not null"`
-	LastLoginTime  *sql.NullTime `gorm:"default:null"`
-	LastLoginIP    *string       `gorm:"size:128;default:null"`
+	ID             uint         `gorm:"primarykey"`
+	Username       string       `gorm:"uniqueIndex:idx_users_username;size:64;not null"`
+	Email          string       `gorm:"uniqueIndex:idx_users_email;size:128;not null"`
+	Cid            uint         `gorm:"uniqueIndex:idx_users_cid;not null"`
+	Password       string       `gorm:"size:128;not null"`
+	ImageId        *uint        `gorm:"default:null"`
+	QQ             *string      `gorm:"size:16;default:null"`
+	Banned         sql.NullTime `gorm:"default:null"`
+	Rating         int          `gorm:"default:0;not null"`
+	Permission     uint64       `gorm:"default:0;not null"`
+	TotalPilotTime uint64       `gorm:"default:0;not null"`
+	LastLoginTime  sql.NullTime `gorm:"default:null"`
+	LastLoginIP    *string      `gorm:"size:128;default:null"`
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 

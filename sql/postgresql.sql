@@ -8,6 +8,7 @@ CREATE TABLE "users"
     "password"         VARCHAR(128) NOT NULL,
     "image_id"         BIGINT       NULL,
     "qq"               VARCHAR(16)  NULL,
+    "banned"           TIMESTAMP    NULL,
     "rating"           INTEGER      NOT NULL DEFAULT 0,
     "permission"       BIGINT       NOT NULL DEFAULT 0,
     "total_pilot_time" BIGINT       NOT NULL DEFAULT 0,
