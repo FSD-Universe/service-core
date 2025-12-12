@@ -20,7 +20,26 @@ var (
 	ErrMissingOrMalformedJwt = errors.New("missing or malformed jwt")
 )
 
-func GetJWTMiddleware(factory httpjwt.ClaimFactoryInterface) echo.MiddlewareFunc {
+func jwtVerifyMiddleWare(flushToken bool) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			token := ctx.Get("user").(*jwt.Token)
+			claim := token.Claims.(*httpjwt.Claims)
+			if flushToken == claim.FlushToken {
+				return next(ctx)
+			}
+			return dto.NewApiResponse[any](dto.ErrInvalidJwtType, nil).Response(ctx)
+		}
+	}
+}
+
+func GetJWTMiddleware(
+	factory httpjwt.ClaimFactoryInterface,
+) (
+	jwtMiddleware echo.MiddlewareFunc,
+	requireNoRefreshToken echo.MiddlewareFunc,
+	requireRefreshToken echo.MiddlewareFunc,
+) {
 	jwtConfig := echojwt.Config{
 		TokenLookup: "header:Authorization:Bearer ",
 		ParseTokenFunc: func(c echo.Context, auth string) (interface{}, error) {
@@ -47,5 +66,6 @@ func GetJWTMiddleware(factory httpjwt.ClaimFactoryInterface) echo.MiddlewareFunc
 			return data.Response(c)
 		},
 	}
-	return echojwt.WithConfig(jwtConfig)
+
+	return echojwt.WithConfig(jwtConfig), jwtVerifyMiddleWare(false), jwtVerifyMiddleWare(true)
 }
