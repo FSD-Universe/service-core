@@ -23,26 +23,34 @@ func ValidStruct(val interface{}) (*ApiStatus, error) {
 			continue
 		}
 		tags := strings.Split(tag, ",")
+		hasValue := !v.Field(i).IsZero()
 		for _, t := range tags {
-			if t == "required" && v.Field(i).IsZero() {
+			if t == "required" && !hasValue {
 				return ErrLackParam, nil
 			}
-			if strings.HasPrefix(t, "min") {
+			if strings.HasPrefix(t, "min=") {
 				res, err := processTagMin(t, v.Field(i))
 				if res == nil && err == nil {
 					continue
 				}
 				return res, err
 			}
-			if strings.HasPrefix(t, "max") {
+			if strings.HasPrefix(t, "max=") {
 				res, err := processTagMax(t, v.Field(i))
 				if res == nil && err == nil {
 					continue
 				}
 				return res, err
 			}
-			if strings.HasPrefix(t, "regex") {
+			if strings.HasPrefix(t, "regex=") {
 				res, err := processRegex(t, v.Field(i))
+				if res == nil && err == nil {
+					continue
+				}
+				return res, err
+			}
+			if strings.HasPrefix(t, "length=") {
+				res, err := processLength(t, v.Field(i))
 				if res == nil && err == nil {
 					continue
 				}
@@ -54,11 +62,26 @@ func ValidStruct(val interface{}) (*ApiStatus, error) {
 	return nil, nil
 }
 
-func processRegex(tagStr string, field reflect.Value) (*ApiStatus, error) {
+func processLength(tagStr string, field reflect.Value) (*ApiStatus, error) {
 	targets := strings.SplitN(tagStr, "=", 2)
 	if len(targets) != 2 {
-		return nil, errors.New("tag 'min' error, miss argument")
+		return nil, errors.New("tag 'length' error, miss argument")
 	}
+	if field.Kind() != reflect.String {
+		return nil, fmt.Errorf("tag 'length' unsupport type: %v", field.Kind())
+	}
+	target := utils.StrToInt(targets[1], -1)
+	if target == -1 {
+		return nil, fmt.Errorf("tag 'length' error, illegal argument %s", targets[1])
+	}
+	if field.Len() != target {
+		return ErrErrorParam, nil
+	}
+	return nil, nil
+}
+
+func processRegex(tagStr string, field reflect.Value) (*ApiStatus, error) {
+	targets := strings.SplitN(tagStr, "=", 2)
 	if field.Kind() != reflect.String {
 		return nil, fmt.Errorf("tag 'regex' unsupport type: %v", field.Kind())
 	}
