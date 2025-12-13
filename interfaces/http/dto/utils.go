@@ -31,3 +31,7 @@ func ErrorResponse(ctx echo.Context, codeStatus *ApiStatus) error {
 func TextResponse(ctx echo.Context, httpCode int, content string) error {
 	return ctx.String(httpCode, content)
 }
+
+func JsonResponse(ctx echo.Context, httpCode int, data interface{}) error {
+	return ctx.JSON(httpCode, data)
+}
