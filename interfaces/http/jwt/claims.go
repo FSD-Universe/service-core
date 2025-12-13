@@ -45,6 +45,7 @@ type ContentSetter interface {
 	SetCid(cid uint)
 	SetPermission(permission uint64)
 	SetRating(rating int)
+	SetRaw(raw *Claims)
 }
 
 type Content struct {
@@ -52,6 +53,7 @@ type Content struct {
 	Cid        uint
 	Permission uint64
 	Rating     int
+	Raw        *Claims
 }
 
 func (c *Content) SetUid(uid uint) {
@@ -70,6 +72,10 @@ func (c *Content) SetRating(rating int) {
 	c.Rating = rating
 }
 
+func (c *Content) SetRaw(raw *Claims) {
+	c.Raw = raw
+}
+
 func SetJwtContent[T ContentSetter](data T, ctx echo.Context) error {
 	token, ok := ctx.Get("user").(*jwt.Token)
 	if !ok {
@@ -83,5 +89,6 @@ func SetJwtContent[T ContentSetter](data T, ctx echo.Context) error {
 	data.SetUid(claim.Uid)
 	data.SetCid(claim.Cid)
 	data.SetRating(claim.Rating)
+	data.SetRaw(claim)
 	return nil
 }
