@@ -30,7 +30,7 @@ func ReadOrDownloadFile(filePath, url string) ([]byte, error) {
 		return nil, fmt.Errorf("file read error: %w", err)
 	}
 
-	fmt.Printf("%s not found, downloading from %s", filePath, url)
+	fmt.Printf("%s not found, downloading from %s\n", filePath, url)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -45,14 +45,14 @@ func ReadOrDownloadFile(filePath, url string) ([]byte, error) {
 		return nil, fmt.Errorf("HTTP error: %s", resp.Status)
 	}
 
-	fmt.Printf("Connection established with %s", url)
+	fmt.Printf("Connection established with %s\n", url)
 
 	content, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("read response error: %w", err)
 	}
 
-	fmt.Printf("%s successfully downloaded, %d bytes", filePath, len(content))
+	fmt.Printf("%s successfully downloaded, %d bytes\n", filePath, len(content))
 
 	if err := CreateFileWithContent(filePath, content); err != nil {
 		return nil, fmt.Errorf("file write error: %w", err)
