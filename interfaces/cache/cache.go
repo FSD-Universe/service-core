@@ -11,10 +11,10 @@ type CachedItem[T any] struct {
 	ExpiredAt  time.Time
 }
 
-type Interface[T any] interface {
-	Set(key string, value T, expiredAt time.Time)
-	SetWithTTL(key string, value T, ttl time.Duration)
-	Get(key string) (T, bool)
-	Del(key string)
+type Interface[K comparable, T any] interface {
+	Set(key K, value T, expiredAt time.Time)
+	SetWithTTL(key K, value T, ttl time.Duration)
+	Get(key K) (T, bool)
+	Del(key K)
 	Close()
 }
