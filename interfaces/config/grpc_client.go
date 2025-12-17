@@ -15,13 +15,13 @@ import (
 
 type GrpcClientConfig struct {
 	EnableTLS  bool   `yaml:"enable_tls"`
-	CA         string `yaml:"ca"`
 	EnableMTLS bool   `yaml:"enable_mtls"`
+	CA         string `yaml:"ca"`
 	Cert       string `yaml:"cert"`
 	Key        string `yaml:"key"`
 
 	// 内部变量
-	Credentials credentials.TransportCredentials
+	Credentials credentials.TransportCredentials `yaml:"-"`
 }
 
 func (g *GrpcClientConfig) InitDefaults() {
