@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Half_nothing
 // SPDX-License-Identifier: MIT
 
-//go:build http
+//go:build http && httpjwt
 
 // Package http
 package http
