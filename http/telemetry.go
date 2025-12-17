@@ -3,8 +3,8 @@
 
 //go:build http && telemetry
 
-// Package middleware
-package middleware
+// Package http
+package http
 
 import (
 	"github.com/labstack/echo/v4"

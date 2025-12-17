@@ -3,7 +3,8 @@
 
 //go:build http
 
-package middleware
+// Package http
+package http
 
 import (
 	"sync"

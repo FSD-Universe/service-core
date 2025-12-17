@@ -3,8 +3,8 @@
 
 //go:build http
 
-// Package middleware
-package middleware
+// Package http
+package http
 
 import (
 	"errors"
