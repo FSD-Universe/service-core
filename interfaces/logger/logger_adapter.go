@@ -38,7 +38,7 @@ func (loggerDecorator *Decorator) LogHandler() *slog.Logger {
 }
 
 func (loggerDecorator *Decorator) Debug(msg string) {
-	loggerDecorator.logger.Debug(fmt.Sprintf("%-15s | %s", loggerDecorator.loggerPrefixName, msg))
+	loggerDecorator.logger.Debug(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
 }
 
 func (loggerDecorator *Decorator) Debugf(msg string, v ...interface{}) {
