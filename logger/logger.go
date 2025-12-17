@@ -216,6 +216,10 @@ func (lg *Logger) Init(logName string, logConfig *logger.LogConfig) {
 	lg.Debugf("%s logger initialized", strings.ToUpper(logName))
 }
 
+func (lg *Logger) Level() slog.Level {
+	return lg.handler.logLevel
+}
+
 // ShutdownCallback 获取关闭回调
 func (lg *Logger) ShutdownCallback(context.Context) error {
 	return lg.handler.Close()

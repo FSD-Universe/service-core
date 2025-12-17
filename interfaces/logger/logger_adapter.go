@@ -11,68 +11,72 @@ import (
 )
 
 type Decorator struct {
-	logger           Interface
-	loggerPrefixName string
+	logger Interface
+	prefix string
 }
 
 func NewLoggerAdapter(
 	logger Interface,
-	loggerPrefixName string,
+	prefix string,
 ) *Decorator {
 	return &Decorator{
-		logger:           logger,
-		loggerPrefixName: loggerPrefixName,
+		logger: logger,
+		prefix: prefix,
 	}
 }
 
-func (loggerDecorator *Decorator) Init(logName string, logConfig *LogConfig) {
-	loggerDecorator.logger.Init(logName, logConfig)
+func (lg *Decorator) Init(logName string, logConfig *LogConfig) {
+	lg.logger.Init(logName, logConfig)
 }
 
-func (loggerDecorator *Decorator) ShutdownCallback(ctx context.Context) error {
-	return loggerDecorator.logger.ShutdownCallback(ctx)
+func (lg *Decorator) Level() slog.Level {
+	return lg.logger.Level()
 }
 
-func (loggerDecorator *Decorator) LogHandler() *slog.Logger {
-	return loggerDecorator.logger.LogHandler()
+func (lg *Decorator) ShutdownCallback(ctx context.Context) error {
+	return lg.logger.ShutdownCallback(ctx)
 }
 
-func (loggerDecorator *Decorator) Debug(msg string) {
-	loggerDecorator.logger.Debug(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+func (lg *Decorator) LogHandler() *slog.Logger {
+	return lg.logger.LogHandler()
 }
 
-func (loggerDecorator *Decorator) Debugf(msg string, v ...interface{}) {
-	loggerDecorator.Debug(fmt.Sprintf(msg, v...))
+func (lg *Decorator) Debug(msg string) {
+	lg.logger.Debug(fmt.Sprintf("%s | %s", lg.prefix, msg))
 }
 
-func (loggerDecorator *Decorator) Info(msg string) {
-	loggerDecorator.logger.Info(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+func (lg *Decorator) Debugf(msg string, v ...interface{}) {
+	lg.Debug(fmt.Sprintf(msg, v...))
 }
 
-func (loggerDecorator *Decorator) Infof(msg string, v ...interface{}) {
-	loggerDecorator.Info(fmt.Sprintf(msg, v...))
+func (lg *Decorator) Info(msg string) {
+	lg.logger.Info(fmt.Sprintf("%s | %s", lg.prefix, msg))
 }
 
-func (loggerDecorator *Decorator) Warn(msg string) {
-	loggerDecorator.logger.Warn(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+func (lg *Decorator) Infof(msg string, v ...interface{}) {
+	lg.Info(fmt.Sprintf(msg, v...))
 }
 
-func (loggerDecorator *Decorator) Warnf(msg string, v ...interface{}) {
-	loggerDecorator.Warn(fmt.Sprintf(msg, v...))
+func (lg *Decorator) Warn(msg string) {
+	lg.logger.Warn(fmt.Sprintf("%s | %s", lg.prefix, msg))
 }
 
-func (loggerDecorator *Decorator) Error(msg string) {
-	loggerDecorator.logger.Error(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+func (lg *Decorator) Warnf(msg string, v ...interface{}) {
+	lg.Warn(fmt.Sprintf(msg, v...))
 }
 
-func (loggerDecorator *Decorator) Errorf(msg string, v ...interface{}) {
-	loggerDecorator.Error(fmt.Sprintf(msg, v...))
+func (lg *Decorator) Error(msg string) {
+	lg.logger.Error(fmt.Sprintf("%s | %s", lg.prefix, msg))
 }
 
-func (loggerDecorator *Decorator) Fatal(msg string) {
-	loggerDecorator.logger.Fatal(fmt.Sprintf("%s | %s", loggerDecorator.loggerPrefixName, msg))
+func (lg *Decorator) Errorf(msg string, v ...interface{}) {
+	lg.Error(fmt.Sprintf(msg, v...))
 }
 
-func (loggerDecorator *Decorator) Fatalf(msg string, v ...interface{}) {
-	loggerDecorator.Debug(fmt.Sprintf(msg, v...))
+func (lg *Decorator) Fatal(msg string) {
+	lg.logger.Fatal(fmt.Sprintf("%s | %s", lg.prefix, msg))
+}
+
+func (lg *Decorator) Fatalf(msg string, v ...interface{}) {
+	lg.Debug(fmt.Sprintf(msg, v...))
 }

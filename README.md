@@ -33,6 +33,20 @@ go test ./...
 - grpc: Grpc服务
 - permission: 权限工具
 - event_bus: 事件总线支持
+- telemetry: 可观测性支持
+
+## 命令行参数与环境变量一览
+
+| 命令行参数              | 环境变量               | 描述                 | 默认值                                       |
+|:-------------------|:-------------------|:-------------------|:------------------------------------------|
+| no_logs            | NO_LOGS            | 禁用日志输出到文件          | false                                     |
+| auto_migrate       | AUTO_MIGRATE       | 自动迁移数据库(不要在生产环境使用) | false                                     |
+| config             | CONFIG_FILE_PATH   | 配置文件路径             | "config.yaml"                             |
+| broadcast_port     | BROADCAST_PORT     | 服务发现广播端口           | 9999                                      |
+| heartbeat_interval | HEARTBEAT_INTERVAL | 心跳间隔               | "30s"                                     |
+| service_timeout    | SERVICE_TIMEOUT    | 服务超时时间             | "90s"                                     |
+| cleanup_interval   | CLEANUP_INTERVAL   | 清理间隔               | "30s"                                     |
+| eth_name           | ETH_NAME           | 以太网接口名称            | "Ethernet"(windows) / "eth0"(linux/macos) |
 
 ## 开源协议
 

@@ -26,6 +26,10 @@ func (f *FakeLogger) Init(_ string, _ *logger.LogConfig) {
 	return
 }
 
+func (f *FakeLogger) Level() slog.Level {
+	return slog.LevelDebug
+}
+
 func (f *FakeLogger) ShutdownCallback(_ context.Context) error {
 	return nil
 }

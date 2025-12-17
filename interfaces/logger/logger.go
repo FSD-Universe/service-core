@@ -11,6 +11,7 @@ import (
 
 type Interface interface {
 	Init(logName string, logConfig *LogConfig)
+	Level() slog.Level
 	ShutdownCallback(ctx context.Context) error
 	LogHandler() *slog.Logger
 	Debug(msg string)

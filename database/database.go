@@ -7,6 +7,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"gorm.io/gorm"
@@ -49,7 +50,7 @@ func InitDatabase(lg logger.Interface, c *config.DatabaseConfig) (cleaner.Shutdo
 	gormConfig.PrepareStmt = true
 	gormConfig.TranslateError = true
 
-	if *global.Debug {
+	if lg.Level() <= slog.LevelDebug {
 		gormConfig.Logger = gormLogger.Default.LogMode(gormLogger.Error)
 	} else {
 		gormConfig.Logger = gormLogger.Default.LogMode(gormLogger.Silent)

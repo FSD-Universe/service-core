@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	Debug          = flag.Bool("debug", false, "Enable debug mode")
 	NoLogs         = flag.Bool("no_logs", false, "Disable logging to file")
 	AutoMigrate    = flag.Bool("auto_migrate", false, "Auto migrate database. Caution: Dont set this to true in production env")
 	ConfigFilePath = flag.String("config", "./config.yaml", "Path to configuration file")
@@ -34,7 +33,6 @@ const (
 
 	LogName = "MAIN"
 
-	EnvDebug             = "DEBUG"
 	EnvNoLogs            = "NO_LOGS"
 	EnvAutoMigrate       = "AUTO_MIGRATE"
 	EnvConfigFilePath    = "CONFIG_FILE_PATH"
@@ -47,7 +45,6 @@ const (
 
 func CheckFlags() {
 	flag.Parse()
-	utils.CheckBoolEnv(EnvDebug, Debug)
 	utils.CheckBoolEnv(EnvNoLogs, NoLogs)
 	utils.CheckBoolEnv(EnvAutoMigrate, AutoMigrate)
 	utils.CheckStringEnv(EnvConfigFilePath, ConfigFilePath)
