@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"half-nothing.cn/service-core/interfaces/cleaner"
@@ -33,7 +34,14 @@ func StartGrpcServer(
 		lg.Fatalf("gRPC fail to listen: %v", err)
 		return
 	}
-	s := grpc.NewServer()
+	var s *grpc.Server
+	if c.TLSConfig.Enable {
+		s = grpc.NewServer(
+			grpc.Creds(c.TLSConfig.Credentials),
+		)
+	} else {
+		s = grpc.NewServer()
+	}
 	initServer(s)
 	reflection.Register(s)
 	cl.Add("gRPC Server", func(ctx context.Context) error {
@@ -63,11 +71,18 @@ func StartGrpcClient(
 	lg logger.Interface,
 	host string,
 	port int,
+	c *config.GrpcClientConfig,
 ) (*grpc.ClientConn, error) {
 	var conn *grpc.ClientConn
+	var creds credentials.TransportCredentials
+	if c.EnableTLS {
+		creds = c.Credentials
+	} else {
+		creds = insecure.NewCredentials()
+	}
 	conn, err := grpc.NewClient(
 		fmt.Sprintf("%s:%d", host, port),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithTransportCredentials(creds),
 	)
 	if err != nil {
 		lg.Fatalf("gRPC client connect fail: %v", err)

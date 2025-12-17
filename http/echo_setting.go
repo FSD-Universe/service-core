@@ -76,7 +76,7 @@ func SetRecoverConfig(lg logger.Interface, e *echo.Echo) {
 	}))
 }
 
-func SetSecureConfig(e *echo.Echo, c *config.SSLConfig) {
+func SetSecureConfig(e *echo.Echo, c *config.HttpTLSConfig) {
 	if c.ForceHttps {
 		e.Use(middleware.HTTPSRedirect())
 	}

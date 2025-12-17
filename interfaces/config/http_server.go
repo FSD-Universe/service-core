@@ -34,7 +34,7 @@ func (h *HSTSConfig) Verify() (bool, error) {
 	return true, nil
 }
 
-type SSLConfig struct {
+type HttpTLSConfig struct {
 	Enable     bool        `yaml:"enable"`
 	Cert       string      `yaml:"cert"`
 	Key        string      `yaml:"key"`
@@ -42,7 +42,7 @@ type SSLConfig struct {
 	HSTSConfig *HSTSConfig `yaml:"hsts"`
 }
 
-func (s *SSLConfig) InitDefaults() {
+func (s *HttpTLSConfig) InitDefaults() {
 	s.Enable = false
 	s.Cert = ""
 	s.Key = ""
@@ -51,7 +51,7 @@ func (s *SSLConfig) InitDefaults() {
 	s.HSTSConfig.InitDefaults()
 }
 
-func (s *SSLConfig) Verify() (bool, error) {
+func (s *HttpTLSConfig) Verify() (bool, error) {
 	if !s.Enable {
 		return true, nil
 	}
@@ -68,14 +68,14 @@ func (s *SSLConfig) Verify() (bool, error) {
 }
 
 type HttpServerConfig struct {
-	Enable    bool       `yaml:"enable"`
-	Host      string     `yaml:"host"`
-	Port      int        `yaml:"port"`
-	BodyLimit string     `yaml:"body_limit"`
-	RateLimit int        `yaml:"rate_limit"`
-	ProxyType int        `yaml:"proxy_type"`
-	TrustIps  []string   `yaml:"trust_ips"`
-	SSLConfig *SSLConfig `yaml:"ssl"`
+	Enable    bool           `yaml:"enable"`
+	Host      string         `yaml:"host"`
+	Port      int            `yaml:"port"`
+	BodyLimit string         `yaml:"body_limit"`
+	RateLimit int            `yaml:"rate_limit"`
+	ProxyType int            `yaml:"proxy_type"`
+	TrustIps  []string       `yaml:"trust_ips"`
+	SSLConfig *HttpTLSConfig `yaml:"tls"`
 
 	// 内部变量
 	Type ProxyType `yaml:"-"`
@@ -89,7 +89,7 @@ func (h *HttpServerConfig) InitDefaults() {
 	h.RateLimit = 20
 	h.ProxyType = 0
 	h.TrustIps = []string{"0.0.0.0/0"}
-	h.SSLConfig = &SSLConfig{}
+	h.SSLConfig = &HttpTLSConfig{}
 	h.SSLConfig.InitDefaults()
 }
 
