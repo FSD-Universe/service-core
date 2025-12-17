@@ -14,7 +14,7 @@ import (
 	"half-nothing.cn/service-core/interfaces/logger"
 )
 
-func ListenPort(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig) {
+func Serve(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig) {
 	protocol := "http"
 	if c.SSLConfig.Enable {
 		protocol = "https"
