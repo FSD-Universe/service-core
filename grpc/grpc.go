@@ -33,6 +33,7 @@ func StartGrpcServerWithTrace(
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		lg.Fatalf("gRPC fail to listen: %v", err)
+		started <- false
 		return
 	}
 	var s *grpc.Server
@@ -49,6 +50,7 @@ func StartGrpcServerWithTrace(
 	initServer(s)
 	reflection.Register(s)
 	cl.Add("gRPC Server", func(ctx context.Context) error {
+		close(started)
 		timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 		cleanOver := make(chan struct{})
@@ -64,7 +66,7 @@ func StartGrpcServerWithTrace(
 		return nil
 	})
 	lg.Infof("gRPC server listening at %v", lis.Addr())
-	close(started)
+	started <- true
 	if err := s.Serve(lis); err != nil {
 		lg.Fatalf("gRPC failed to serve: %v", err)
 		return
