@@ -25,6 +25,12 @@ var (
 	CleanupInterval   = flag.Duration("cleanup_interval", 30*time.Second, "Cleanup interval")
 )
 
+// http服务器配置
+var (
+	HttpTimeout = flag.Duration("http_timeout", 30*time.Second, "Http request timeout")
+	GzipLevel   = flag.Int("gzip_level", 5, "GZip level")
+)
+
 const (
 	BeginYear = 2025
 
@@ -41,6 +47,8 @@ const (
 	EnvServiceTimeout    = "SERVICE_TIMEOUT"
 	EnvCleanupInterval   = "CLEANUP_INTERVAL"
 	EnvEthName           = "ETH_NAME"
+	EnvHttpTimeout       = "HTTP_TIMEOUT"
+	EnvGzipLevel         = "GZIP_LEVEL"
 )
 
 func CheckFlags() {
@@ -53,4 +61,6 @@ func CheckFlags() {
 	utils.CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
 	utils.CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
 	utils.CheckStringEnv(EnvEthName, EthName)
+	utils.CheckDurationEnv(EnvHttpTimeout, HttpTimeout)
+	utils.CheckIntEnv(EnvGzipLevel, GzipLevel)
 }

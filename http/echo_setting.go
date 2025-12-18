@@ -15,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
 	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/global"
 	"half-nothing.cn/service-core/interfaces/logger"
 )
 
@@ -123,14 +124,14 @@ func SetRateLimit(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig)
 	}
 }
 
-func SetEchoConfig(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig, httpTimeout time.Duration) {
+func SetEchoConfig(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig, skipper middleware.Skipper) {
 	SetEchoLogger(lg, e)
 	SetRealIPMethod(lg, e, c)
-	SetTimeoutConfig(e, httpTimeout, nil)
+	SetTimeoutConfig(e, *global.HttpTimeout, skipper)
 	SetRecoverConfig(lg, e)
 	SetSecureConfig(e, c.SSLConfig)
 	SetCORSConfig(e)
 	SetBodyLimitConfig(lg, e, c)
-	SetGzipConfig(e, 5, nil)
+	SetGzipConfig(e, *global.GzipLevel, skipper)
 	SetRateLimit(lg, e, c)
 }

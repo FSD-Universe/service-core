@@ -47,6 +47,8 @@ go test ./...
 | service_timeout    | SERVICE_TIMEOUT    | 服务超时时间             | "90s"                                     |
 | cleanup_interval   | CLEANUP_INTERVAL   | 清理间隔               | "30s"                                     |
 | eth_name           | ETH_NAME           | 以太网接口名称            | "Ethernet"(windows) / "eth0"(linux/macos) |
+| http_timeout       | HTTP_TIMEOUT       | Http请求超时时间         | "30s"                                     |
+| gzip_level         | GZIP_LEVEL         | Gzip压缩等级           | 5                                         |
 
 ## 开源协议
 
