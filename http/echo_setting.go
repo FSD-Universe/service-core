@@ -7,6 +7,7 @@
 package http
 
 import (
+	"context"
 	"log/slog"
 	"net"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
+	"half-nothing.cn/service-core/interfaces/cleaner"
 	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/global"
 	"half-nothing.cn/service-core/interfaces/http/dto"
@@ -129,6 +131,14 @@ func SetUnmatchedRoute(e *echo.Echo) {
 	e.Any("*", func(c echo.Context) error {
 		return dto.ErrorResponse(c, dto.ErrNoMatchRoute)
 	})
+}
+
+func SetCleaner(cl cleaner.Interface, e *echo.Echo) {
+	cl.Add("Http Server", func(e *echo.Echo) cleaner.ShutdownCallback {
+		return func(ctx context.Context) error {
+			return e.Shutdown(ctx)
+		}
+	}(e))
 }
 
 func SetEchoConfig(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig, skipper middleware.Skipper) {
