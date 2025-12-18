@@ -16,6 +16,7 @@ import (
 	slogecho "github.com/samber/slog-echo"
 	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/global"
+	"half-nothing.cn/service-core/interfaces/http/dto"
 	"half-nothing.cn/service-core/interfaces/logger"
 )
 
@@ -122,6 +123,12 @@ func SetRateLimit(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig)
 	} else {
 		lg.Warn("No rate limit was set, be aware of possible DDOS attacks")
 	}
+}
+
+func SetUnmatchedRoute(e *echo.Echo) {
+	e.Any("*", func(c echo.Context) error {
+		return dto.ErrorResponse(c, dto.ErrNoMatchRoute)
+	})
 }
 
 func SetEchoConfig(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig, skipper middleware.Skipper) {
