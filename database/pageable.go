@@ -24,7 +24,7 @@ type PageInterface[T entity.Base] interface {
 type Page[T entity.Base] struct {
 	pageNumber int
 	pageSize   int
-	dest       []T
+	dest       *[]T
 	model      T
 	queryFunc  func(tx *gorm.DB) *gorm.DB
 }
@@ -44,7 +44,7 @@ type Page[T entity.Base] struct {
 //   - *Page: 新创建的分页对象指针
 func NewPage[T entity.Base](pageNumber int,
 	pageSize int,
-	dest []T,
+	dest *[]T,
 	model T,
 	queryFunc func(tx *gorm.DB) *gorm.DB,
 ) *Page[T] {
