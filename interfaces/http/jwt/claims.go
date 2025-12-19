@@ -77,13 +77,9 @@ func (c *Content) SetRaw(raw *Claims) {
 }
 
 func SetJwtContent[T ContentSetter](data T, ctx echo.Context) error {
-	token, ok := ctx.Get("user").(*jwt.Token)
+	claim, ok := ctx.Get("user").(*Claims)
 	if !ok {
 		return errors.New("JWT token not found in context")
-	}
-	claim, ok := token.Claims.(*Claims)
-	if !ok {
-		return errors.New("invalid claim type")
 	}
 	data.SetPermission(claim.Permission)
 	data.SetUid(claim.Uid)

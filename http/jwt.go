@@ -23,8 +23,7 @@ var (
 func jwtVerifyMiddleWare(flushToken bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			token := ctx.Get("user").(*jwt.Token)
-			claim := token.Claims.(*httpjwt.Claims)
+			claim := ctx.Get("user").(*httpjwt.Claims)
 			if flushToken == claim.FlushToken {
 				return next(ctx)
 			}
