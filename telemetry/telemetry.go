@@ -10,6 +10,10 @@ import (
 	"context"
 	"errors"
 
+	"half-nothing.cn/service-core/interfaces/cleaner"
+	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/interfaces/logger"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -18,9 +22,6 @@ import (
 	"go.opentelemetry.io/otel/sdk/trace"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	t "go.opentelemetry.io/otel/trace"
-	"half-nothing.cn/service-core/interfaces/cleaner"
-	"half-nothing.cn/service-core/interfaces/config"
-	"half-nothing.cn/service-core/interfaces/logger"
 )
 
 type SDK struct {
@@ -92,4 +93,15 @@ func (sdk *SDK) NewTraceProvider(ctx context.Context) (*trace.TracerProvider, er
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp, nil
+}
+
+func InitSDK(lg logger.Interface, cl cleaner.Interface, c *config.TelemetryConfig) error {
+	sdk := NewSDK(lg, c)
+	shutdown, err := sdk.SetupOTelSDK(context.Background())
+	if err != nil {
+		lg.Fatalf("fail to initialize telemetry: %v", err)
+		return err
+	}
+	cl.Add("Telemetry", shutdown)
+	return nil
 }
