@@ -141,6 +141,10 @@ func SetCleaner(cl cleaner.Interface, e *echo.Echo) {
 	}(e))
 }
 
+func SetHealthPoint(e *echo.Echo) {
+	e.GET("/health", func(ctx echo.Context) error { return dto.TextResponse(ctx, dto.HttpCodeOk.Code(), "OK") })
+}
+
 func SetEchoConfig(lg logger.Interface, e *echo.Echo, c *config.HttpServerConfig, skipper middleware.Skipper) {
 	SetEchoLogger(lg, e)
 	SetRealIPMethod(lg, e, c)
