@@ -77,14 +77,12 @@ func (g *GrpcTLSConfig) Verify() (bool, error) {
 }
 
 type GrpcServerConfig struct {
-	Enable    bool           `yaml:"enable"`
 	Host      string         `yaml:"host"`
 	Port      int            `yaml:"port"`
 	TLSConfig *GrpcTLSConfig `yaml:"tls"`
 }
 
 func (g *GrpcServerConfig) InitDefaults() {
-	g.Enable = true
 	g.Host = "0.0.0.0"
 	g.Port = 8081
 	g.TLSConfig = &GrpcTLSConfig{}
@@ -92,9 +90,6 @@ func (g *GrpcServerConfig) InitDefaults() {
 }
 
 func (g *GrpcServerConfig) Verify() (bool, error) {
-	if !g.Enable {
-		return true, nil
-	}
 	if g.Host == "" {
 		return false, fmt.Errorf("host is empty")
 	}

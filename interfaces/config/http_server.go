@@ -68,7 +68,6 @@ func (s *HttpTLSConfig) Verify() (bool, error) {
 }
 
 type HttpServerConfig struct {
-	Enable    bool           `yaml:"enable"`
 	Host      string         `yaml:"host"`
 	Port      int            `yaml:"port"`
 	BodyLimit string         `yaml:"body_limit"`
@@ -82,7 +81,6 @@ type HttpServerConfig struct {
 }
 
 func (h *HttpServerConfig) InitDefaults() {
-	h.Enable = true
 	h.Host = "0.0.0.0"
 	h.Port = 8080
 	h.BodyLimit = "5M"
@@ -94,9 +92,6 @@ func (h *HttpServerConfig) InitDefaults() {
 }
 
 func (h *HttpServerConfig) Verify() (bool, error) {
-	if !h.Enable {
-		return true, nil
-	}
 	if h.Host == "" {
 		return false, fmt.Errorf("host is empty")
 	}
