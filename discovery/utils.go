@@ -7,10 +7,10 @@ package discovery
 import (
 	"context"
 	"slices"
-	"time"
 
 	"half-nothing.cn/service-core/interfaces/cleaner"
 	"half-nothing.cn/service-core/interfaces/discovery"
+	"half-nothing.cn/service-core/interfaces/global"
 	"half-nothing.cn/service-core/interfaces/logger"
 	"half-nothing.cn/service-core/utils"
 )
@@ -52,7 +52,6 @@ func KeepRequiredServiceOnline(
 	logger logger.Interface,
 	requiredServices []string,
 	service *ServiceDiscovery,
-	timeout time.Duration,
 	shutdown func(),
 	flushService func(info *discovery.ServiceInfo),
 ) func(status *ServiceStatusChange) {
@@ -61,6 +60,7 @@ func KeepRequiredServiceOnline(
 			return
 		}
 		if slices.Contains(requiredServices, status.ServiceName) {
+			timeout := *global.ReconnectTimeout
 			logger.Warnf("required service %s offline, wait %.0fs for online", status.ServiceName, timeout.Seconds())
 			info, err := service.WaitForService(status.ServiceName, timeout)
 			if err != nil {

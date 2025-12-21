@@ -475,7 +475,7 @@ func (sl *ServiceListener) listener() {
 	for {
 		select {
 		case status := <-sl.serviceStatusChan:
-			sl.handler(status)
+			go sl.handler(status)
 		case <-sl.ctx.Done():
 			return
 		}

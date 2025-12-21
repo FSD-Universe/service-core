@@ -23,6 +23,7 @@ var (
 	HeartbeatInterval = flag.Duration("heartbeat_interval", 30*time.Second, "Heartbeat interval")
 	ServiceTimeout    = flag.Duration("service_timeout", 90*time.Second, "Service timeout")
 	CleanupInterval   = flag.Duration("cleanup_interval", 30*time.Second, "Cleanup interval")
+	ReconnectTimeout  = flag.Duration("reconnect_timeout", 30*time.Second, "Reconnect timeout")
 )
 
 // http服务器配置
@@ -46,6 +47,7 @@ const (
 	EnvHeartbeatInterval = "HEARTBEAT_INTERVAL"
 	EnvServiceTimeout    = "SERVICE_TIMEOUT"
 	EnvCleanupInterval   = "CLEANUP_INTERVAL"
+	EnvReconnectTimeout  = "RECONNECT_TIMEOUT"
 	EnvEthName           = "ETH_NAME"
 	EnvHttpTimeout       = "HTTP_TIMEOUT"
 	EnvGzipLevel         = "GZIP_LEVEL"
@@ -60,6 +62,7 @@ func CheckFlags() {
 	utils.CheckDurationEnv(EnvHeartbeatInterval, HeartbeatInterval)
 	utils.CheckDurationEnv(EnvServiceTimeout, ServiceTimeout)
 	utils.CheckDurationEnv(EnvCleanupInterval, CleanupInterval)
+	utils.CheckDurationEnv(EnvReconnectTimeout, ReconnectTimeout)
 	utils.CheckStringEnv(EnvEthName, EthName)
 	utils.CheckDurationEnv(EnvHttpTimeout, HttpTimeout)
 	utils.CheckIntEnv(EnvGzipLevel, GzipLevel)
