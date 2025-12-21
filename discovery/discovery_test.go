@@ -32,7 +32,7 @@ func TestNewServiceDiscovery(t *testing.T) {
 		t.Fatal("Version should not be nil")
 		return
 	}
-	if err := discover.Start(); err != nil {
+	if err := discover.Start(context.Background()); err != nil {
 		t.Fatal(err)
 		return
 	}

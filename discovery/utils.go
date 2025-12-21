@@ -20,16 +20,20 @@ func StartServiceDiscovery(
 	version *utils.Version,
 	serviceName string,
 	servicePort int,
-) *ServiceDiscovery {
+	handler func(status *ServiceStatusChange),
+) (*ServiceDiscovery, *ServiceListener) {
 	start := <-started
 	if !start {
-		return nil
+		return nil, nil
 	}
 	service := NewServiceDiscovery(lg, serviceName, servicePort, version)
 	if err := service.Start(ctx); err != nil {
 		lg.Fatalf("fail to start service discovery: %v", err)
-		return nil
+		return nil, nil
 	}
 	cl.Add("Service Discovery", service.Stop)
-	return service
+	listener := NewServiceListener(service.StatusChannel(), handler)
+	listener.Start(ctx)
+	cl.Add("Service Listener", listener.Stop)
+	return service, listener
 }

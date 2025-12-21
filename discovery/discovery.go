@@ -466,8 +466,9 @@ func (sl *ServiceListener) Start(ctx context.Context) {
 	go sl.listener()
 }
 
-func (sl *ServiceListener) Stop() {
+func (sl *ServiceListener) Stop(_ context.Context) error {
 	sl.cancel()
+	return nil
 }
 
 func (sl *ServiceListener) listener() {
