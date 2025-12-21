@@ -21,19 +21,33 @@ import (
 
 // ServiceDiscovery 服务发现
 type ServiceDiscovery struct {
-	logger        logger.Interface
-	serviceName   string
-	port          int
-	broadcastPort int
-	services      map[string]*discovery.ServiceInfo
-	servicesMutex sync.RWMutex
-	running       chan bool
-	conn          *net.UDPConn
-	broadcastIP   string
-	localIP       string
-	version       *utils.Version
-	broadcastAddr *net.UDPAddr
+	logger            logger.Interface
+	serviceName       string
+	port              int
+	broadcastPort     int
+	services          map[string]*discovery.ServiceInfo
+	servicesMutex     sync.RWMutex
+	conn              *net.UDPConn
+	broadcastIP       string
+	localIP           string
+	version           *utils.Version
+	broadcastAddr     *net.UDPAddr
+	serviceStatusChan chan *ServiceStatusChange
+	ctx               context.Context
+	cancel            context.CancelFunc
 }
+
+type ServiceStatusChange struct {
+	ServiceName string
+	Status      ServiceStatus
+}
+
+type ServiceStatus string
+
+const (
+	ServiceRegistered   ServiceStatus = "registered"
+	ServiceUnregistered ServiceStatus = "unregistered"
+)
 
 // NewServiceDiscovery 创建新的服务发现实例
 func NewServiceDiscovery(
@@ -43,14 +57,20 @@ func NewServiceDiscovery(
 	version *utils.Version,
 ) *ServiceDiscovery {
 	return &ServiceDiscovery{
-		logger:        logger.NewLoggerAdapter(lg, "service-discovery"),
-		serviceName:   serviceName,
-		port:          port,
-		broadcastPort: *global.BroadcastPort,
-		services:      make(map[string]*discovery.ServiceInfo),
-		version:       version,
-		running:       nil,
+		logger:            logger.NewLoggerAdapter(lg, "service-discovery"),
+		serviceName:       serviceName,
+		port:              port,
+		broadcastPort:     *global.BroadcastPort,
+		services:          make(map[string]*discovery.ServiceInfo),
+		version:           version,
+		ctx:               nil,
+		cancel:            nil,
+		serviceStatusChan: nil,
 	}
+}
+
+func (sd *ServiceDiscovery) StatusChannel() chan *ServiceStatusChange {
+	return sd.serviceStatusChan
 }
 
 // createMessage 创建广播消息
@@ -91,7 +111,7 @@ func (sd *ServiceDiscovery) sendBroadcast(msg *discovery.BroadcastMessage) error
 }
 
 // Start 启动服务发现
-func (sd *ServiceDiscovery) Start() error {
+func (sd *ServiceDiscovery) Start(ctx context.Context) error {
 	// 初始化UDP连接
 	udpAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", sd.broadcastPort))
 	if err != nil {
@@ -106,7 +126,8 @@ func (sd *ServiceDiscovery) Start() error {
 	sd.localIP = utils.GetLocalIP(*global.EthName)
 	sd.broadcastIP = utils.GetBroadcastIP(*global.EthName, sd.localIP)
 	sd.broadcastAddr, _ = net.ResolveUDPAddr("udp", fmt.Sprintf("%s:%d", sd.broadcastIP, sd.broadcastPort))
-	sd.running = make(chan bool)
+	sd.ctx, sd.cancel = context.WithCancel(ctx)
+	sd.serviceStatusChan = make(chan *ServiceStatusChange, 16)
 
 	// 启动监听协程
 	go sd.listener()
@@ -139,7 +160,7 @@ func (sd *ServiceDiscovery) listener() {
 
 	for {
 		select {
-		case <-sd.running:
+		case <-sd.ctx.Done():
 			return
 		default:
 			_ = sd.conn.SetReadDeadline(time.Now().Add(1 * time.Second))
@@ -255,6 +276,11 @@ func (sd *ServiceDiscovery) registerService(serviceInfo *discovery.ServiceInfo) 
 	sd.services[serviceInfo.Name] = serviceInfo
 
 	sd.logger.Infof("Service registered: %s(%s) at %s:%d", serviceInfo.Name, serviceInfo.Version, serviceInfo.IP, serviceInfo.Port)
+	select {
+	case sd.serviceStatusChan <- &ServiceStatusChange{ServiceName: serviceInfo.Name, Status: ServiceRegistered}:
+	default:
+		sd.logger.Warnf("Service status channel is full, dropping message for service: %s", serviceInfo.Name)
+	}
 }
 
 // updateServiceHeartbeat 更新服务心跳
@@ -275,7 +301,12 @@ func (sd *ServiceDiscovery) unregisterService(serviceName string) {
 	defer sd.servicesMutex.Unlock()
 
 	delete(sd.services, serviceName)
-	fmt.Printf("Service unregistered: %s", serviceName)
+	sd.logger.Infof("Service unregistered: %s", serviceName)
+	select {
+	case sd.serviceStatusChan <- &ServiceStatusChange{ServiceName: serviceName, Status: ServiceUnregistered}:
+	default:
+		sd.logger.Warnf("Service status channel is full, dropping message for service: %s", serviceName)
+	}
 }
 
 func (sd *ServiceDiscovery) sendOnlineMessage() error {
@@ -295,7 +326,7 @@ func (sd *ServiceDiscovery) heartbeatBroadcaster() {
 			if err := sd.sendBroadcast(msg); err != nil {
 				fmt.Printf("Failed to send heartbeat: %v", err)
 			}
-		case <-sd.running:
+		case <-sd.ctx.Done():
 			return
 		}
 	}
@@ -318,7 +349,7 @@ func (sd *ServiceDiscovery) serviceCleanup() {
 				}
 			}
 			sd.servicesMutex.Unlock()
-		case <-sd.running:
+		case <-sd.ctx.Done():
 			return
 		}
 	}
@@ -364,6 +395,19 @@ func (sd *ServiceDiscovery) WaitForService(serviceName string, timeout time.Dura
 	return nil, fmt.Errorf("service %s not found within timeout", serviceName)
 }
 
+func (sd *ServiceDiscovery) WaitForServices(requiredServices []string, timeout time.Duration) map[string]*discovery.ServiceInfo {
+	services := make(map[string]*discovery.ServiceInfo)
+	for _, serviceName := range requiredServices {
+		info, err := sd.WaitForService(serviceName, timeout)
+		if err != nil {
+			sd.logger.Errorf("Failed to wait for service: %v", err)
+			return nil
+		}
+		services[serviceName] = info
+	}
+	return services
+}
+
 // Stop 停止服务发现
 func (sd *ServiceDiscovery) Stop(ctx context.Context) error {
 	timeout, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -371,7 +415,8 @@ func (sd *ServiceDiscovery) Stop(ctx context.Context) error {
 	done := make(chan struct{})
 
 	go func() {
-		close(sd.running)
+		close(sd.serviceStatusChan)
+		sd.cancel()
 		defer func(conn *net.UDPConn) {
 			if conn != nil {
 				_ = conn.Close()
@@ -396,5 +441,42 @@ func (sd *ServiceDiscovery) Stop(ctx context.Context) error {
 		return fmt.Errorf("timeout while stopping service discovery")
 	case <-done:
 		return nil
+	}
+}
+
+type ServiceListener struct {
+	serviceStatusChan chan *ServiceStatusChange
+	handler           func(status *ServiceStatusChange)
+	ctx               context.Context
+	cancel            context.CancelFunc
+}
+
+func NewServiceListener(
+	statusChan chan *ServiceStatusChange,
+	handler func(status *ServiceStatusChange),
+) *ServiceListener {
+	return &ServiceListener{
+		serviceStatusChan: statusChan,
+		handler:           handler,
+	}
+}
+
+func (sl *ServiceListener) Start(ctx context.Context) {
+	sl.ctx, sl.cancel = context.WithCancel(ctx)
+	go sl.listener()
+}
+
+func (sl *ServiceListener) Stop() {
+	sl.cancel()
+}
+
+func (sl *ServiceListener) listener() {
+	for {
+		select {
+		case status := <-sl.serviceStatusChan:
+			sl.handler(status)
+		case <-sl.ctx.Done():
+			return
+		}
 	}
 }

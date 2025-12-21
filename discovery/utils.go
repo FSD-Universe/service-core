@@ -5,12 +5,15 @@
 package discovery
 
 import (
+	"context"
+
 	"half-nothing.cn/service-core/interfaces/cleaner"
 	"half-nothing.cn/service-core/interfaces/logger"
 	"half-nothing.cn/service-core/utils"
 )
 
 func StartServiceDiscovery(
+	ctx context.Context,
 	lg logger.Interface,
 	cl cleaner.Interface,
 	started chan bool,
@@ -23,7 +26,7 @@ func StartServiceDiscovery(
 		return nil
 	}
 	service := NewServiceDiscovery(lg, serviceName, servicePort, version)
-	if err := service.Start(); err != nil {
+	if err := service.Start(ctx); err != nil {
 		lg.Fatalf("fail to start service discovery: %v", err)
 		return nil
 	}
