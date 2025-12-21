@@ -10,15 +10,23 @@ import (
 	"half-nothing.cn/service-core/utils"
 )
 
-func StartServiceDiscovery(lg logger.Interface, cl cleaner.Interface, started chan bool, version *utils.Version, serviceName string, servicePort int) {
+func StartServiceDiscovery(
+	lg logger.Interface,
+	cl cleaner.Interface,
+	started chan bool,
+	version *utils.Version,
+	serviceName string,
+	servicePort int,
+) *ServiceDiscovery {
 	start := <-started
 	if !start {
-		return
+		return nil
 	}
 	service := NewServiceDiscovery(lg, serviceName, servicePort, version)
 	if err := service.Start(); err != nil {
 		lg.Fatalf("fail to start service discovery: %v", err)
-		return
+		return nil
 	}
 	cl.Add("Service Discovery", service.Stop)
+	return service
 }
