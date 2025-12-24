@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"errors"
 	"reflect"
 	"time"
 
@@ -66,9 +65,6 @@ func (repo *BaseRepository[T]) GetById(id uint) (T, error) {
 	err := repo.Query(func(tx *gorm.DB) error {
 		return tx.First(result).Error
 	})
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = repository.ErrRecordNotFound
-	}
 	return result, err
 }
 

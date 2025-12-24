@@ -13,9 +13,7 @@ import (
 )
 
 var (
-	ErrRecordNotFound = errors.New("record not found")
-	ErrArgument       = errors.New("argument error")
-	ErrDataConflicts  = errors.New("data conflicts")
+	ErrArgument = errors.New("argument error")
 )
 
 // Base 是一个泛型接口，定义了基本的数据库操作方法
