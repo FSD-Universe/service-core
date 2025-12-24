@@ -16,14 +16,14 @@ const (
 	AdminEntry Permission = 1 << iota
 	// UserShowList 显示用户管理入口
 	UserShowList
-	// UserSetPassword 设置用户密码
-	UserSetPassword
-	// UserEditBaseInfo 编辑用户基本信息
-	UserEditBaseInfo
+	// UserEditInfo 编辑用户信息
+	UserEditInfo
 	// UserShowPermission 显示用户权限管理入口
 	UserShowPermission
 	// UserEditPermission 编辑用户权限
 	UserEditPermission
+	// UserShowRole 显示用户角色
+	UserShowRole
 	// UserEditRole 编辑用户角色
 	UserEditRole
 	// UserBan 封禁用户
@@ -125,10 +125,10 @@ const (
 var Permissions = utils.NewEnums[string, Permission](
 	utils.NewEnum("AdminEntry", AdminEntry),
 	utils.NewEnum("UserShowList", UserShowList),
-	utils.NewEnum("UserSetPassword", UserSetPassword),
-	utils.NewEnum("UserEditBaseInfo", UserEditBaseInfo),
+	utils.NewEnum("UserEditInfo", UserEditInfo),
 	utils.NewEnum("UserShowPermission", UserShowPermission),
 	utils.NewEnum("UserEditPermission", UserEditPermission),
+	utils.NewEnum("UserShowRole", UserShowRole),
 	utils.NewEnum("UserEditRole", UserEditRole),
 	utils.NewEnum("UserBan", UserBan),
 	utils.NewEnum("ControllerShowList", ControllerShowList),
