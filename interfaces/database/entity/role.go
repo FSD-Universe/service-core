@@ -8,8 +8,6 @@ package entity
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Role struct {
@@ -19,7 +17,6 @@ type Role struct {
 	Comment    string `gorm:"type:text;not null"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
-	DeletedAt  gorm.DeletedAt
 }
 
 func (r *Role) GetId() uint {

@@ -114,7 +114,6 @@ CREATE TABLE "roles"
     "comment"    TEXT        NOT NULL,
     "created_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    "deleted_at" TIMESTAMP   NULL
 );
 
 COMMENT ON TABLE "roles" IS '角色表';
@@ -124,7 +123,6 @@ COMMENT ON COLUMN "roles"."permission" IS '角色权限';
 COMMENT ON COLUMN "roles"."comment" IS '角色备注';
 COMMENT ON COLUMN "roles"."created_at" IS '创建时间';
 COMMENT ON COLUMN "roles"."updated_at" IS '更新时间';
-COMMENT ON COLUMN "roles"."deleted_at" IS '软删除';
 
 -- 用户角色授予表
 CREATE TABLE "user_roles"

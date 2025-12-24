@@ -68,7 +68,6 @@ CREATE TABLE `roles`
     `comment`    TEXT            NOT NULL COMMENT '角色备注',
     `created_at` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    `deleted_at` DATETIME        NULL     DEFAULT NULL COMMENT '软删除',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARACTER SET = `utf8mb4` COLLATE = `utf8mb4_general_ci` COMMENT = '角色表';
 

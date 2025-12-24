@@ -70,8 +70,7 @@ CREATE TABLE `roles`
     `permission` INTEGER NOT NULL DEFAULT 0,                 -- 角色权限
     `comment`    TEXT    NOT NULL,                           -- 角色备注
     `created_at` TEXT             DEFAULT CURRENT_TIMESTAMP, -- 创建时间
-    `updated_at` TEXT             DEFAULT CURRENT_TIMESTAMP, -- 更新时间
-    `deleted_at` TEXT                                        -- 软删除
+    `updated_at` TEXT             DEFAULT CURRENT_TIMESTAMP  -- 更新时间
 );
 
 -- 用户角色授予表
