@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"errors"
+	"reflect"
 	"time"
 
 	"gorm.io/gorm"
@@ -54,6 +55,13 @@ func NewBaseRepository[T entity.Base](
 
 func (repo *BaseRepository[T]) GetById(id uint) (T, error) {
 	var result T
+	if reflect.ValueOf(result).Kind() == reflect.Pointer {
+		t := reflect.TypeOf(result)
+		if t.Elem().Kind() == reflect.Struct {
+			newValue := reflect.New(t.Elem())
+			result = newValue.Interface().(T)
+		}
+	}
 	result.SetId(id)
 	err := repo.Query(func(tx *gorm.DB) error {
 		return tx.First(result).Error
