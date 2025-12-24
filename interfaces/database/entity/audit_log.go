@@ -50,6 +50,7 @@ var (
 
 	// 角色相关
 	AuditEventRoleCreated          AuditEvent = utils.NewEnum("RoleCreated", "管理员创建角色")
+	AuditEventRoleUpdated          AuditEvent = utils.NewEnum("RoleUpdated", "管理员修改角色信息")
 	AuditEventRoleDeleted          AuditEvent = utils.NewEnum("RoleDeleted", "管理员删除角色")
 	AuditEventRolePermissionGrant  AuditEvent = utils.NewEnum("RolePermissionGrant", "管理员授予角色权限")
 	AuditEventRolePermissionRevoke AuditEvent = utils.NewEnum("RolePermissionRevoke", "管理员撤销角色权限")
@@ -121,6 +122,7 @@ var AuditEventManager = utils.NewEnums(
 	AuditEventUserPermissionRevoke,
 	AuditEventUserBan,
 	AuditEventRoleCreated,
+	AuditEventRoleUpdated,
 	AuditEventRoleDeleted,
 	AuditEventRolePermissionGrant,
 	AuditEventRolePermissionRevoke,
