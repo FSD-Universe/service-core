@@ -17,6 +17,8 @@ import (
 type TagHandler func(field reflect.Value, tagValue string, additional []string) (*ApiStatus, error)
 
 const (
+	TagName = "valid"
+
 	TagRequired = "required"
 	TagMin      = "min"
 	TagMax      = "max"
@@ -33,27 +35,103 @@ var tagHandlers = map[string]TagHandler{
 	TagLength: processLength,
 }
 
+func isStruct(v reflect.Value) bool {
+	if v.Kind() == reflect.Struct {
+		return true
+	}
+	for v.Kind() == reflect.Pointer {
+		if v.IsNil() {
+			return false
+		}
+		v = v.Elem()
+	}
+	return v.Kind() == reflect.Struct
+}
+
+func isArrayOrSlice(v reflect.Value) bool {
+	if v.Kind() == reflect.Array || v.Kind() == reflect.Slice {
+		return true
+	}
+	for v.Kind() == reflect.Pointer {
+		if v.IsNil() {
+			return false
+		}
+		v = v.Elem()
+	}
+	return v.Kind() == reflect.Slice || v.Kind() == reflect.Array
+}
+
+func getArrayOrSliceType(v reflect.Value) reflect.Kind {
+	types := v.Type()
+	for types.Kind() == reflect.Pointer {
+		types = types.Elem()
+	}
+	subType := types.Elem()
+	for subType.Kind() == reflect.Pointer {
+		subType = subType.Elem()
+	}
+	return subType.Kind()
+}
+
 func ValidStruct(val interface{}) (res *ApiStatus, err error) {
 	v := reflect.ValueOf(val)
-	if v.Kind() == reflect.Pointer {
+	for v.Kind() == reflect.Pointer {
+		if v.IsNil() {
+			return nil, nil
+		}
 		v = v.Elem()
 	}
 
+	if v.Kind() != reflect.Struct {
+		return nil, nil
+	}
+
 	for i := 0; i < v.NumField(); i++ {
-		tag := v.Type().Field(i).Tag.Get("valid")
+		field := v.Field(i)
+		tag := v.Type().Field(i).Tag.Get(TagName)
+		required := strings.Contains(tag, TagRequired)
+
+		if required && field.IsZero() {
+			return ErrLackParam, nil
+		}
+
+		if field.IsZero() {
+			continue
+		}
+
+		if isArrayOrSlice(field) && getArrayOrSliceType(field) == reflect.Struct {
+			for field.Kind() == reflect.Pointer {
+				field = field.Elem()
+			}
+			for i := 0; i < field.Len(); i++ {
+				res, err = ValidStruct(field.Index(i).Interface())
+				if res != nil || err != nil {
+					return
+				}
+			}
+			continue
+		}
+
+		if isStruct(field) {
+			res, err = ValidStruct(field.Interface())
+			if res != nil || err != nil {
+				return
+			}
+			continue
+		}
+
 		if tag == "" {
 			continue
 		}
+
 		tags := strings.Split(tag, ",")
-		hasValue := !v.Field(i).IsZero()
+
+		for field.Kind() == reflect.Pointer {
+			field = field.Elem()
+		}
+
 		for _, t := range tags {
 			if t == TagRequired {
-				if !hasValue {
-					return ErrLackParam, nil
-				}
-				continue
-			}
-			if !hasValue {
 				continue
 			}
 			tags := strings.SplitN(t, "=", 2)
@@ -68,7 +146,7 @@ func ValidStruct(val interface{}) (res *ApiStatus, err error) {
 			if !ok {
 				return nil, fmt.Errorf("tag %s unsupport", tagName)
 			}
-			res, err = handler(v.Field(i), tagValue, additional)
+			res, err = handler(field, tagValue, additional)
 			if res != nil || err != nil {
 				return
 			}
@@ -86,8 +164,17 @@ func processLength(field reflect.Value, tagValue string, _ []string) (*ApiStatus
 	if target == -1 {
 		return nil, fmt.Errorf("tag 'length' error, illegal argument %s", tagValue)
 	}
-	if field.Len() != target {
-		return ErrErrorParam, nil
+	switch field.Kind() {
+	case reflect.String:
+		if field.Len() != target {
+			return ErrErrorParam, nil
+		}
+	case reflect.Slice:
+		if field.Len() != target {
+			return ErrErrorParam, nil
+		}
+	default:
+		return nil, fmt.Errorf("tag 'length' unsupport type: %v", field.Kind())
 	}
 	return nil, nil
 }
@@ -145,6 +232,15 @@ func checkMinExclude(val reflect.Value, target float64) (*ApiStatus, error) {
 		}
 	case reflect.Pointer:
 		return checkMin(val.Elem(), target)
+	case reflect.Slice:
+		fallthrough
+	case reflect.Array:
+		for i := 0; i < val.Len(); i++ {
+			res, err := checkMin(val.Index(i), target)
+			if res != nil || err != nil {
+				return res, err
+			}
+		}
 	default:
 		return nil, fmt.Errorf("tag 'min' unsupport type: %v", val.Kind())
 	}
@@ -171,6 +267,15 @@ func checkMin(val reflect.Value, target float64) (*ApiStatus, error) {
 		}
 	case reflect.Pointer:
 		return checkMin(val.Elem(), target)
+	case reflect.Slice:
+		fallthrough
+	case reflect.Array:
+		for i := 0; i < val.Len(); i++ {
+			res, err := checkMin(val.Index(i), target)
+			if res != nil || err != nil {
+				return res, err
+			}
+		}
 	default:
 		return nil, fmt.Errorf("tag 'min' unsupport type: %v", val.Kind())
 	}
@@ -197,6 +302,15 @@ func checkMaxExclude(val reflect.Value, target float64) (*ApiStatus, error) {
 		}
 	case reflect.Pointer:
 		return checkMax(val.Elem(), target)
+	case reflect.Slice:
+		fallthrough
+	case reflect.Array:
+		for i := 0; i < val.Len(); i++ {
+			res, err := checkMax(val.Index(i), target)
+			if res != nil || err != nil {
+				return res, err
+			}
+		}
 	default:
 		return nil, fmt.Errorf("tag 'max' unsupport type: %v", val.Kind())
 	}
@@ -223,6 +337,15 @@ func checkMax(val reflect.Value, target float64) (*ApiStatus, error) {
 		}
 	case reflect.Pointer:
 		return checkMax(val.Elem(), target)
+	case reflect.Slice:
+		fallthrough
+	case reflect.Array:
+		for i := 0; i < val.Len(); i++ {
+			res, err := checkMax(val.Index(i), target)
+			if res != nil || err != nil {
+				return res, err
+			}
+		}
 	default:
 		return nil, fmt.Errorf("tag 'max' unsupport type: %v", val.Kind())
 	}
