@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 
@@ -69,7 +70,7 @@ func (consul *ConsulClient) RegisterServer() error {
 			Timeout:                        *global.HealthCheckTimeout,
 			DeregisterCriticalServiceAfter: *global.DeregisterAfter,
 		},
-		Meta: map[string]string{"version": consul.version},
+		Meta: map[string]string{"version": consul.version, "http_port": strconv.Itoa(consul.config.HttpPort)},
 	}
 	err = consul.client.Agent().ServiceRegister(registration)
 	if err != nil {
