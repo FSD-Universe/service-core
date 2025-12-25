@@ -116,6 +116,7 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 
 	lastIndex := uint64(0)
 	lastEntries := make([]*capi.ServiceEntry, 0)
+	consul.logger.Debugf("watch service %s", serviceName)
 	go func(name string) {
 		for {
 			select {
@@ -131,6 +132,7 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 					},
 				)
 				if err != nil {
+					consul.logger.Debugf("watch service %s fail: %v", serviceName, err)
 					consul.EventChan <- &discovery.ServiceEvent{
 						ServiceName: name,
 						EventType:   discovery.ServiceError,
@@ -139,9 +141,11 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 					continue
 				}
 				if meta.LastIndex <= lastIndex {
+					consul.logger.Debugf("no change for service %s", serviceName)
 					continue
 				}
 				lastIndex = meta.LastIndex
+				consul.logger.Debugf("watch service %s, total %d instances", serviceName, len(entries))
 				consul.stateMutex.Lock()
 				consul.serviceStates[name] = entries
 				consul.stateMutex.Unlock()
