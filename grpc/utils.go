@@ -1,62 +1,25 @@
 // Copyright (c) 2025 Half_nothing
 // SPDX-License-Identifier: MIT
 
+//go:build telemetry
+
 // Package grpc
 package grpc
 
 import (
-	"context"
-	"sync"
-
-	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	"half-nothing.cn/service-core/interfaces/logger"
+	"half-nothing.cn/service-core/interfaces/config"
+	"half-nothing.cn/service-core/logger"
 )
 
-type ClientConnections struct {
-	logger      logger.Interface
-	connections map[string]*grpc.ClientConn
-	lock        sync.RWMutex
-}
-
-func NewClientConnections(lg logger.Interface) *ClientConnections {
-	return &ClientConnections{
-		logger:      logger.NewLoggerAdapter(lg, "grpc-connections"),
-		connections: make(map[string]*grpc.ClientConn),
-		lock:        sync.RWMutex{},
+func InitGrpcClient(lg *logger.Logger, teleConfig *config.TelemetryConfig, clientConfig *config.GrpcClientConfig, host string, port int) (conn *grpc.ClientConn, err error) {
+	if teleConfig.GrpcClientTrace {
+		conn, err = StartGrpcClientWithTrace(lg, host, port, clientConfig)
+	} else {
+		conn, err = StartGrpcClient(lg, host, port, clientConfig)
 	}
-}
-
-func (c *ClientConnections) Get(name string) *grpc.ClientConn {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	if conn, ok := c.connections[name]; ok {
-		return conn
+	if err != nil {
+		lg.Fatalf("fail to get grpc client connection: %v", err)
 	}
-	return nil
-}
-
-func (c *ClientConnections) Add(name string, conn *grpc.ClientConn) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	c.connections[name] = conn
-}
-
-func (c *ClientConnections) Remove(name string) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	delete(c.connections, name)
-}
-
-func (c *ClientConnections) Close(ctx context.Context) error {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	eg, _ := errgroup.WithContext(ctx)
-	for name, conn := range c.connections {
-		eg.Go(func() error {
-			c.logger.Debugf("closing connection: %s", name)
-			return conn.Close()
-		})
-	}
-	return eg.Wait()
+	return
 }

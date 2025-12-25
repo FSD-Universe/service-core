@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Half_nothing
 // SPDX-License-Identifier: MIT
 
-//go:build grpc && telemetry
+//go:build telemetry
 
 // Package grpc
 package grpc

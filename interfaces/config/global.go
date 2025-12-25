@@ -15,6 +15,7 @@ type GlobalConfig struct {
 	Name      string            `yaml:"name"`
 	Version   string            `yaml:"version"`
 	LogConfig *logger.LogConfig `yaml:"log"`
+	Discovery *DiscoveryConfig  `yaml:"discovery"`
 
 	// 内部使用
 	ConfigVersion string `yaml:"-"`
@@ -23,6 +24,8 @@ type GlobalConfig struct {
 func (g *GlobalConfig) InitDefaults() {
 	g.LogConfig = &logger.LogConfig{}
 	g.LogConfig.InitDefaults()
+	g.Discovery = &DiscoveryConfig{}
+	g.Discovery.InitDefaults()
 }
 
 func (g *GlobalConfig) Verify() (bool, error) {
@@ -44,6 +47,9 @@ func (g *GlobalConfig) Verify() (bool, error) {
 		return false, fmt.Errorf("log config is empty")
 	}
 	if ok, err := g.LogConfig.Verify(); !ok {
+		return false, err
+	}
+	if ok, err := g.Discovery.Verify(); !ok {
 		return false, err
 	}
 	return true, nil

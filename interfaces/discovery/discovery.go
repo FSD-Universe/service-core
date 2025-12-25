@@ -5,34 +5,39 @@
 package discovery
 
 import (
+	"context"
 	"time"
+
+	capi "github.com/hashicorp/consul/api"
 )
 
-// 消息类型
+type EventType string
+
 const (
-	MessageTypeDiscoveryRequest  = "DISCOVERY_REQ"
-	MessageTypeDiscoveryResponse = "DISCOVERY_RESP"
-	MessageTypeHeartbeat         = "HEARTBEAT"
-	MessageTypeOnline            = "ONLINE"
-	MessageTypeShutdown          = "SHUTDOWN"
+	ServiceError   EventType = "error"
+	ServiceUpdate  EventType = "update"
+	ServiceOnline  EventType = "online"
+	ServiceOffline EventType = "offline"
 )
 
-var AllServices = "*"
-
-// ServiceInfo 服务信息
-type ServiceInfo struct {
-	Name          string            `json:"name"`
-	IP            string            `json:"ip"`
-	Port          int               `json:"port"`
-	Version       string            `json:"version"`
-	LastHeartbeat time.Time         `json:"last_heartbeat"`
-	Metadata      map[string]string `json:"metadata"`
+type ServiceEvent struct {
+	ServiceName string
+	Instances   []*capi.ServiceEntry
+	EventType   EventType
 }
 
-// BroadcastMessage 广播消息
-type BroadcastMessage struct {
-	Type      string       `json:"type"`
-	Sender    *ServiceInfo `json:"sender"`
-	Timestamp int64        `json:"timestamp"`
-	Target    string       `json:"target,omitempty"`
+type Interface interface {
+	RegisterServer() error
+	UnregisterServer(ctx context.Context) error
+	QueryService(serviceName string, queryOptions *capi.QueryOptions) ([]*capi.ServiceEntry, *capi.QueryMeta, error)
+}
+
+type ServiceManagerInterface interface {
+	WatchService(serviceName string)
+	WatchServices(serviceNames []string)
+	GetServiceState(serviceName string) []*capi.ServiceEntry
+	GetRandomServiceInfo(serviceName string) *capi.ServiceEntry
+	CheckHealthy() bool
+	StopWatch(ctx context.Context) error
+	WaitForServices(timeout time.Duration) error
 }
