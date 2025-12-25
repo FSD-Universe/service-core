@@ -24,7 +24,7 @@ var (
 	DeregisterAfter     = flag.String("deregister_after", "1m", "Deregister critical service after")
 	ServiceAddress      = flag.String("service_address", "localhost", "Service address")
 	CenterAddress       = flag.String("center_address", "localhost:8500", "Service discovery center address")
-	ReconnectTimeout    = flag.Duration("reconnect_timeout", 5*time.Second, "Reconnect timeout")
+	ReconnectTimeout    = flag.Duration("reconnect_timeout", 30*time.Second, "Reconnect timeout")
 )
 
 // http服务器配置

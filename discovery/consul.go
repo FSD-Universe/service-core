@@ -120,6 +120,8 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 	lastIndex := uint64(0)
 	lastEntries := make([]*capi.ServiceEntry, 0)
 	consul.logger.Debugf("watch service %s", serviceName)
+	underReconnect := false
+
 	go func(name string) {
 		for {
 			select {
@@ -154,11 +156,17 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 				consul.serviceStates[name] = entries
 				consul.stateMutex.Unlock()
 				if len(entries) == 0 {
-					consul.EventChan <- &discovery.ServiceEvent{
-						ServiceName: name,
-						EventType:   discovery.ServiceOffline,
+					if !underReconnect {
+						consul.EventChan <- &discovery.ServiceEvent{
+							ServiceName: name,
+							EventType:   discovery.ServiceOffline,
+						}
+						underReconnect = true
 					}
 				} else if len(lastEntries) == 0 {
+					if underReconnect {
+						underReconnect = false
+					}
 					consul.EventChan <- &discovery.ServiceEvent{
 						ServiceName: name,
 						Instances:   entries,
