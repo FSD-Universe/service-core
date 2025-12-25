@@ -27,6 +27,7 @@ type ConsulClient struct {
 	stateMutex       sync.RWMutex
 	EventChan        chan *discovery.ServiceEvent
 	watchCancelFuncs map[string]context.CancelFunc
+	wg               sync.WaitGroup
 }
 
 func NewConsulClient(
@@ -43,6 +44,7 @@ func NewConsulClient(
 		watchCancelFuncs: make(map[string]context.CancelFunc),
 		stateMutex:       sync.RWMutex{},
 		EventChan:        make(chan *discovery.ServiceEvent, 128),
+		wg:               sync.WaitGroup{},
 	}
 }
 
@@ -111,6 +113,7 @@ func (consul *ConsulClient) QueryService(serviceName string, queryOptions *capi.
 }
 
 func (consul *ConsulClient) WatchService(serviceName string) {
+	consul.wg.Add(1)
 	ctx, cancel := context.WithCancel(context.Background())
 	consul.watchCancelFuncs[serviceName] = cancel
 
@@ -122,6 +125,7 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 			select {
 			case <-ctx.Done():
 				consul.logger.Debugf("cancel watch service %s", serviceName)
+				consul.wg.Done()
 				return
 			default:
 				entries, meta, err := consul.client.Health().Service(
@@ -189,6 +193,9 @@ func (consul *ConsulClient) GetRandomServiceInfo(serviceName string) *capi.Servi
 	consul.stateMutex.RLock()
 	defer consul.stateMutex.RUnlock()
 	services := consul.serviceStates[serviceName]
+	if services == nil || len(services) == 0 {
+		return nil
+	}
 	return services[rand.Intn(len(services))]
 }
 
@@ -196,7 +203,7 @@ func (consul *ConsulClient) CheckHealthy() bool {
 	consul.stateMutex.RLock()
 	defer consul.stateMutex.RUnlock()
 	for _, instances := range consul.serviceStates {
-		if len(instances) == 0 {
+		if instances == nil || len(instances) == 0 {
 			return false
 		}
 	}
@@ -207,6 +214,7 @@ func (consul *ConsulClient) StopWatch(_ context.Context) error {
 	for _, cancel := range consul.watchCancelFuncs {
 		cancel()
 	}
+	consul.wg.Wait()
 	return nil
 }
 

@@ -59,6 +59,7 @@ func KeepRequiredServiceOnline(
 	flushService func(serviceName string, info *capi.ServiceEntry),
 ) func(status *discovery.ServiceEvent) {
 	return func(status *discovery.ServiceEvent) {
+		logger.Debugf("received service event: %s %s", status.ServiceName, status.EventType)
 		switch status.EventType {
 		case discovery.ServiceUpdate:
 			serviceInfo := status.Instances[rand.Intn(len(status.Instances))]
