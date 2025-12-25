@@ -6,7 +6,6 @@ package discovery
 
 import (
 	"context"
-	"math/rand"
 
 	capi "github.com/hashicorp/consul/api"
 	"half-nothing.cn/service-core/interfaces/discovery"
@@ -62,7 +61,9 @@ func KeepRequiredServiceOnline(
 		logger.Debugf("received service event: %s %s", status.ServiceName, status.EventType)
 		switch status.EventType {
 		case discovery.ServiceUpdate:
-			serviceInfo := status.Instances[rand.Intn(len(status.Instances))]
+			fallthrough
+		case discovery.ServiceOnline:
+			serviceInfo := service.GetRandomServiceInfo(status.ServiceName)
 			flushService(status.ServiceName, serviceInfo)
 		case discovery.ServiceOffline:
 			timeout := *global.ReconnectTimeout
