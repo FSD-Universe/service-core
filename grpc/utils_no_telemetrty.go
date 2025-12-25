@@ -7,13 +7,14 @@
 package grpc
 
 import (
+	capi "github.com/hashicorp/consul/api"
 	"google.golang.org/grpc"
 	"half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/logger"
 )
 
-func InitGrpcClient(lg *logger.Logger, clientConfig *config.GrpcClientConfig, host string, port int) (conn *grpc.ClientConn, err error) {
-	conn, err = StartGrpcClient(lg, host, port, clientConfig)
+func InitGrpcClient(lg *logger.Logger, clientConfig *config.GrpcClientConfig, info *capi.ServiceEntry) (conn *grpc.ClientConn, err error) {
+	conn, err = StartGrpcClient(lg, info.Service.Address, info.Service.Port, clientConfig)
 	if err != nil {
 		lg.Fatalf("fail to get grpc client connection: %v", err)
 	}

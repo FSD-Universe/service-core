@@ -35,10 +35,14 @@ func NewConsulClient(
 	version string,
 ) *ConsulClient {
 	return &ConsulClient{
-		logger:  logger.NewLoggerAdapter(lg, "consul-client"),
-		config:  c,
-		version: version,
-		client:  nil,
+		logger:           logger.NewLoggerAdapter(lg, "consul-client"),
+		config:           c,
+		version:          version,
+		client:           nil,
+		serviceStates:    make(map[string][]*capi.ServiceEntry),
+		watchCancelFuncs: make(map[string]context.CancelFunc),
+		stateMutex:       sync.RWMutex{},
+		EventChan:        make(chan *discovery.ServiceEvent, 128),
 	}
 }
 
@@ -77,16 +81,17 @@ func (consul *ConsulClient) RegisterServer() error {
 func (consul *ConsulClient) UnregisterServer(ctx context.Context) error {
 	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
-	errChan := make(chan error)
-	defer close(errChan)
+	finish := make(chan struct{})
+	var err error
 	go func() {
-		errChan <- consul.client.Agent().ServiceDeregister(consul.config.Id)
+		err = consul.client.Agent().ServiceDeregister(consul.config.Id)
+		close(finish)
 	}()
 	select {
 	case <-timeoutCtx.Done():
 		consul.logger.Errorf("timeout while deregistering server")
 		return timeoutCtx.Err()
-	case err := <-errChan:
+	case <-finish:
 		return err
 	}
 }

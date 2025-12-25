@@ -1,6 +1,8 @@
 // Copyright (c) 2025 Half_nothing
 // SPDX-License-Identifier: MIT
 
+//go:build http
+
 // Package config
 package config
 
