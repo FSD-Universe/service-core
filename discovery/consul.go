@@ -179,6 +179,7 @@ func (consul *ConsulClient) WatchService(serviceName string) {
 
 func (consul *ConsulClient) WatchServices(serviceNames []string) {
 	for _, name := range serviceNames {
+		consul.serviceStates[name] = make([]*capi.ServiceEntry, 0)
 		consul.WatchService(name)
 	}
 }
