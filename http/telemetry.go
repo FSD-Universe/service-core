@@ -8,10 +8,15 @@ package http
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"half-nothing.cn/service-core/interfaces/config"
 )
 
-func SetTelemetry(e *echo.Echo, c *config.TelemetryConfig) {
-	e.Use(otelecho.Middleware(c.Name))
+var SkipperHealthCheck = func(c echo.Context) bool {
+	return c.Path() == "/health"
+}
+
+func SetTelemetry(e *echo.Echo, c *config.TelemetryConfig, skipper middleware.Skipper) {
+	e.Use(otelecho.Middleware(c.Name, otelecho.WithSkipper(skipper)))
 }
