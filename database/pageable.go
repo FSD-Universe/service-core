@@ -14,6 +14,7 @@ import (
 
 // PageInterface 分页接口定义
 type PageInterface[T entity.Base] interface {
+	SetCountColumn(column string)
 	GetOffset() int
 	GetTotalQuery(tx *gorm.DB) *gorm.DB
 	GetPageQuery(tx *gorm.DB) *gorm.DB
@@ -27,6 +28,7 @@ type Page[T entity.Base] struct {
 	dest       *[]T
 	model      T
 	queryFunc  func(tx *gorm.DB) *gorm.DB
+	countCol   string
 }
 
 // NewPage 创建一个新的分页对象
@@ -54,7 +56,14 @@ func NewPage[T entity.Base](pageNumber int,
 		dest:       dest,
 		model:      model,
 		queryFunc:  queryFunc,
+		countCol:   "id",
 	}
+}
+
+// SetCountColumn 设置查询总数用的列名
+// 通常用于解决Joins产生的冲突
+func (p *Page[T]) SetCountColumn(column string) {
+	p.countCol = column
 }
 
 // GetOffset 计算分页偏移量
@@ -77,7 +86,7 @@ func (p *Page[T]) GetTotalQuery(tx *gorm.DB) *gorm.DB {
 	if p.queryFunc != nil {
 		tx = p.queryFunc(tx)
 	}
-	return tx.Model(p.model).Select("id")
+	return tx.Model(p.model).Select(p.countCol)
 }
 
 // GetPageQuery 构造分页查询
