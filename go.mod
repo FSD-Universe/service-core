@@ -5,6 +5,7 @@ go 1.25.5
 require (
 	github.com/fatih/color v1.18.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/hashicorp/consul/api v1.33.0
 	github.com/labstack/echo-jwt/v4 v4.4.0
 	github.com/labstack/echo/v4 v4.14.0
 	github.com/samber/slog-echo v1.18.0
@@ -43,7 +44,6 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3 // indirect
-	github.com/hashicorp/consul/api v1.33.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.5.0 // indirect
