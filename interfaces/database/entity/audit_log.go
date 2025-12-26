@@ -47,6 +47,7 @@ var (
 	AuditEventUserPermissionGrant  AuditEvent = utils.NewEnum("UserPermissionGrant", "管理员授予用户权限")
 	AuditEventUserPermissionRevoke AuditEvent = utils.NewEnum("UserPermissionRevoke", "管理员撤销用户权限")
 	AuditEventUserBan              AuditEvent = utils.NewEnum("UserBan", "管理员封禁用户")
+	AuditEventUserUnban            AuditEvent = utils.NewEnum("UserUnban", "管理员解封用户")
 
 	// 角色相关
 	AuditEventRoleCreated          AuditEvent = utils.NewEnum("RoleCreated", "管理员创建角色")
@@ -121,6 +122,7 @@ var AuditEventManager = utils.NewEnums(
 	AuditEventUserPermissionGrant,
 	AuditEventUserPermissionRevoke,
 	AuditEventUserBan,
+	AuditEventUserUnban,
 	AuditEventRoleCreated,
 	AuditEventRoleUpdated,
 	AuditEventRoleDeleted,
