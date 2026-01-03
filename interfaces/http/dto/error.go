@@ -1,13 +1,10 @@
 // Copyright (c) 2025 Half_nothing
 // SPDX-License-Identifier: MIT
 
-//go:build http
-
+// Package dto
 package dto
 
-import (
-	"github.com/labstack/echo/v4"
-)
+import "github.com/labstack/echo/v4"
 
 var (
 	ErrLackParam             = NewApiStatus("PARAM_MISS", "缺少参数", HttpCodeBadRequest)
@@ -20,7 +17,6 @@ var (
 	ErrUnknownJwtError       = NewApiStatus("UNKNOWN_JWT_ERROR", "未知的JWT解析错误", HttpCodeInternalError)
 	ErrRateLimitExceeded     = NewApiStatus("RATE_LIMIT_EXCEEDED", "请求频率过高", HttpCodeTooManyRequests)
 	ErrNoMatchRoute          = NewApiStatus("NO_MATCH_ROUTE", "未匹配到路由", HttpCodeNotFound)
-	ErrDataConflict          = NewApiStatus("DATA_CONFLICT", "数据冲突", HttpCodeConflict)
 	SuccessHandleRequest     = NewApiStatus("SUCCESS", "成功", HttpCodeOk)
 )
 
