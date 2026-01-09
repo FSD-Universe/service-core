@@ -1,4 +1,4 @@
--- Copyright (c) 2025 Half_nothing
+-- Copyright (c) 2025-2026 Half_nothing
 -- SPDX-License-Identifier: MIT
 
 -- 用户信息表
@@ -113,7 +113,7 @@ CREATE TABLE "roles"
     "permission" BIGINT      NOT NULL DEFAULT 0,
     "comment"    TEXT        NOT NULL,
     "created_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 );
 
 COMMENT ON TABLE "roles" IS '角色表';

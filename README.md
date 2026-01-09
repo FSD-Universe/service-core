@@ -56,7 +56,7 @@ go test ./...
 
 MIT License
 
-Copyright © 2025 Half_nothing
+Copyright © 2025-2026 Half_nothing
 
 无附加条款。
 

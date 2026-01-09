@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Half_nothing
+// Copyright (c) 2025-2026 Half_nothing
 // SPDX-License-Identifier: MIT
 
 //go:build database

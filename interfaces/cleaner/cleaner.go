@@ -1,4 +1,4 @@
-// Copyright (c) 2025 Half_nothing
+// Copyright (c) 2025-2026 Half_nothing
 // SPDX-License-Identifier: MIT
 
 // Package cleaner 提供清理器接口，用于管理可清理资源
