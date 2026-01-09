@@ -30,6 +30,10 @@ const (
 	UserBan
 	// ControllerShowList 显示管制员管理入口
 	ControllerShowList
+	// ControllerCreate 添加管制员
+	ControllerCreate
+	// ControllerDelete 删除管制员
+	ControllerDelete
 	// ControllerEditRating 编辑管制员权限
 	ControllerEditRating
 	// ControllerShowRecord 显示管制员履历入口
@@ -132,6 +136,8 @@ var Permissions = utils.NewEnums[string, Permission](
 	utils.NewEnum("UserEditRole", UserEditRole),
 	utils.NewEnum("UserBan", UserBan),
 	utils.NewEnum("ControllerShowList", ControllerShowList),
+	utils.NewEnum("ControllerCreate", ControllerCreate),
+	utils.NewEnum("ControllerDelete", ControllerDelete),
 	utils.NewEnum("ControllerTier2Rating", ControllerTier2Rating),
 	utils.NewEnum("ControllerEditRating", ControllerEditRating),
 	utils.NewEnum("ControllerShowRecord", ControllerShowRecord),
