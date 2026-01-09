@@ -210,6 +210,7 @@ CREATE TABLE `controllers`
     `user_id`               INT UNSIGNED    NOT NULL COMMENT '用户id',
     `instructor_id`         INT UNSIGNED    NULL     DEFAULT NULL COMMENT '教员id',
     `guest`                 TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否为客座管制员',
+    `guest_platform`        VARCHAR(32)     NULL     DEFAULT NULL COMMENT '客座平台',
     `under_monitor`         TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否为实习管制员',
     `under_solo`            TINYINT(1)      NOT NULL DEFAULT FALSE COMMENT '是否SOLO',
     `solo_until`            DATETIME        NULL     DEFAULT NULL COMMENT 'SOLO时限',

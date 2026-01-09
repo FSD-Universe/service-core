@@ -16,6 +16,7 @@ type Controller struct {
 	UserId              uint          `gorm:"uniqueIndex:idx_controllers_user_id;not null"`
 	InstructorId        *uint         `gorm:"index;not null"`
 	Guest               bool          `gorm:"default:false;not null"`
+	GuestPlatform       *string       `gorm:"size:32;default:null"`
 	UnderMonitor        bool          `gorm:"default:false;not null"`
 	UnderSolo           bool          `gorm:"default:false;not null"`
 	SoloUntil           *sql.NullTime `gorm:"default:null"`

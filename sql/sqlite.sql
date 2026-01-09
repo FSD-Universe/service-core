@@ -221,6 +221,7 @@ CREATE TABLE `controllers`
     `user_id`               INTEGER NOT NULL,                           -- 用户id
     `instructor_id`         INTEGER,                                    -- 教员id
     `guest`                 INTEGER NOT NULL DEFAULT FALSE,             -- 是否为客座管制员
+    `guest_platform`        TEXT,                                       -- 客座平台
     `under_monitor`         INTEGER NOT NULL DEFAULT FALSE,             -- 是否为实习管制员
     `under_solo`            INTEGER NOT NULL DEFAULT FALSE,             -- 是否SOLO
     `solo_until`            TEXT,                                       -- SOLO时限

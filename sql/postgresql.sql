@@ -364,16 +364,17 @@ ALTER TABLE "controller_application_times"
 CREATE TABLE "controllers"
 (
     "id"                    BIGSERIAL PRIMARY KEY,
-    "user_id"               BIGINT    NOT NULL,
-    "instructor_id"         BIGINT    NULL,
-    "guest"                 BOOLEAN   NOT NULL DEFAULT FALSE,
-    "under_monitor"         BOOLEAN   NOT NULL DEFAULT FALSE,
-    "under_solo"            BOOLEAN   NOT NULL DEFAULT FALSE,
-    "solo_until"            TIMESTAMP NULL,
-    "tier2"                 BOOLEAN   NOT NULL DEFAULT FALSE,
-    "total_controller_time" BIGINT    NOT NULL DEFAULT 0,
-    "created_at"            TIMESTAMP          DEFAULT CURRENT_TIMESTAMP,
-    "updated_at"            TIMESTAMP          DEFAULT CURRENT_TIMESTAMP
+    "user_id"               BIGINT      NOT NULL,
+    "instructor_id"         BIGINT      NULL,
+    "guest"                 BOOLEAN     NOT NULL DEFAULT FALSE,
+    "guest_platform"        VARCHAR(32) NULL,
+    "under_monitor"         BOOLEAN     NOT NULL DEFAULT FALSE,
+    "under_solo"            BOOLEAN     NOT NULL DEFAULT FALSE,
+    "solo_until"            TIMESTAMP   NULL,
+    "tier2"                 BOOLEAN     NOT NULL DEFAULT FALSE,
+    "total_controller_time" BIGINT      NOT NULL DEFAULT 0,
+    "created_at"            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 );
 
 COMMENT ON TABLE "controllers" IS '管制员表';
@@ -381,6 +382,7 @@ COMMENT ON COLUMN "controllers"."id" IS '主键';
 COMMENT ON COLUMN "controllers"."user_id" IS '用户id';
 COMMENT ON COLUMN "controllers"."instructor_id" IS '教员id';
 COMMENT ON COLUMN "controllers"."guest" IS '是否为客座管制员';
+COMMENT ON COLUMN "controllers"."guest_platform" IS '客座平台';
 COMMENT ON COLUMN "controllers"."under_monitor" IS '是否为实习管制员';
 COMMENT ON COLUMN "controllers"."under_solo" IS '是否SOLO';
 COMMENT ON COLUMN "controllers"."solo_until" IS 'SOLO时限';
