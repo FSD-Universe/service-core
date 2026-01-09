@@ -5,7 +5,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -37,9 +36,7 @@ func ReadOrDownloadFile(filePath, url string) ([]byte, error) {
 		return nil, fmt.Errorf("HTTP request failed: %w", err)
 	}
 
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
-	}(resp.Body)
+	defer func(Body io.ReadCloser) { _ = Body.Close() }(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("HTTP error: %s", resp.Status)
@@ -59,14 +56,4 @@ func ReadOrDownloadFile(filePath, url string) ([]byte, error) {
 	}
 
 	return content, nil
-}
-
-func CheckPoint(port uint) error {
-	if port <= 0 {
-		return errors.New("port must be greater than 0")
-	}
-	if port > 65535 {
-		return errors.New("port must be less than 65535")
-	}
-	return nil
 }

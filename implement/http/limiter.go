@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"half-nothing.cn/service-core/interfaces/http/dto"
 )
 

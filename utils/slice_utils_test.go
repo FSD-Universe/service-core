@@ -149,7 +149,7 @@ func TestMap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Map(tt.args.src, tt.args.mapper)
+			tt.args.src = Map(tt.args.src, tt.args.mapper)
 			if !reflect.DeepEqual(tt.args.src, tt.want) {
 				t.Errorf("Map() = %v, want %v", tt.args.src, tt.want)
 			}

@@ -51,3 +51,5 @@ func (manager *EnumManager[T, V]) GetEnum(value T) *Enum[T, V] {
 func (manager *EnumManager[T, V]) GetEnums() map[T]*Enum[T, V] {
 	return manager.enums
 }
+
+type EnumIntString = *Enum[int, string]

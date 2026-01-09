@@ -7,8 +7,10 @@ package jwt
 import (
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	c "half-nothing.cn/service-core/interfaces/config"
 	"half-nothing.cn/service-core/interfaces/database/entity"
+	. "half-nothing.cn/service-core/interfaces/http/jwt"
 )
 
 type ClaimFactory struct {
