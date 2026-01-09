@@ -114,7 +114,7 @@ func (h *HttpServerConfig) Verify() (bool, error) {
 	return true, nil
 }
 
-type ProxyType *utils.Enum[int, string]
+type ProxyType utils.EnumIntString
 
 var (
 	ProxyTypeDirect       = utils.NewEnum[int, string](0, "direct")

@@ -49,21 +49,21 @@ func (a *Activity) SetId(id uint) {
 	a.ID = id
 }
 
-type ActivityStatus *utils.Enum[int, string]
+type ActivityState utils.EnumIntString
 
 var (
-	ActivityStatusRegistering ActivityStatus = utils.NewEnum(0, "报名中")
-	ActivityStatusInTheEvent  ActivityStatus = utils.NewEnum(1, "活动中")
-	ActivityStatusEnded       ActivityStatus = utils.NewEnum(2, "已结束")
+	ActivityStateRegistering ActivityState = utils.NewEnum(0, "报名中")
+	ActivityStateInTheEvent  ActivityState = utils.NewEnum(1, "活动中")
+	ActivityStateEnded       ActivityState = utils.NewEnum(2, "已结束")
 )
 
-var ActivityStatusManager = utils.NewEnums(
-	ActivityStatusRegistering,
-	ActivityStatusInTheEvent,
-	ActivityStatusEnded,
+var ActivityStatues = utils.NewEnums(
+	ActivityStateRegistering,
+	ActivityStateInTheEvent,
+	ActivityStateEnded,
 )
 
-type ActivityType *utils.Enum[int, string]
+type ActivityType utils.EnumIntString
 
 var (
 	ActivityTypeOneWay     ActivityType = utils.NewEnum(0, "单向单站")
@@ -71,7 +71,7 @@ var (
 	ActivityTypeFIROpenDay ActivityType = utils.NewEnum(2, "空域开放日")
 )
 
-var ActivityTypeManager = utils.NewEnums(
+var ActivityTypes = utils.NewEnums(
 	ActivityTypeOneWay,
 	ActivityTypeBothWay,
 	ActivityTypeFIROpenDay,

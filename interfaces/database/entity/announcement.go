@@ -36,7 +36,7 @@ func (a *Announcement) SetId(id uint) {
 	a.ID = id
 }
 
-type AnnouncementType *utils.Enum[int, string]
+type AnnouncementType utils.EnumIntString
 
 var (
 	AnnouncementTypeNormal     AnnouncementType = utils.NewEnum(0, "普通公告")
@@ -44,7 +44,7 @@ var (
 	AnnouncementTypeTechnical  AnnouncementType = utils.NewEnum(2, "技术组公告")
 )
 
-var AnnouncementTypeManager = utils.NewEnums(
+var AnnouncementTypes = utils.NewEnums(
 	AnnouncementTypeNormal,
 	AnnouncementTypeController,
 	AnnouncementTypeTechnical,

@@ -36,7 +36,7 @@ func (a *AuditLog) SetId(id uint) {
 	a.ID = id
 }
 
-type AuditEvent *utils.Enum[string, string]
+type AuditEvent utils.EnumStringString
 
 //goland:noinspection GoCommentStart
 var (
@@ -115,7 +115,7 @@ var (
 	AuditEventAnnouncementDeleted   AuditEvent = utils.NewEnum("AnnouncementDeleted", "管理员删除公告")
 )
 
-var AuditEventManager = utils.NewEnums(
+var AuditEvents = utils.NewEnums(
 	AuditEventUserRegistered,
 	AuditEventUserResetPassword,
 	AuditEventUserInformationEdit,

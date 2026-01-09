@@ -36,14 +36,14 @@ func (t *Ticket) SetId(id uint) {
 	t.ID = id
 }
 
-type TicketType *utils.Enum[int, string]
+type TicketType utils.EnumIntString
 
 var (
-	TicketTypeFeature     = utils.NewEnum(0, "建议")
-	TicketTypeBug         = utils.NewEnum(1, "bug")
-	TicketTypeComplain    = utils.NewEnum(2, "投诉")
-	TicketTypeRecognition = utils.NewEnum(3, "表扬")
-	TicketTypeOtherType   = utils.NewEnum(4, "其他")
+	TicketTypeFeature     TicketType = utils.NewEnum(0, "建议")
+	TicketTypeBug         TicketType = utils.NewEnum(1, "bug")
+	TicketTypeComplain    TicketType = utils.NewEnum(2, "投诉")
+	TicketTypeRecognition TicketType = utils.NewEnum(3, "表扬")
+	TicketTypeOtherType   TicketType = utils.NewEnum(4, "其他")
 )
 
 var TicketTypes = utils.NewEnums(

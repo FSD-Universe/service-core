@@ -35,18 +35,18 @@ func (a *ActivityPilot) SetId(id uint) {
 	a.ID = id
 }
 
-type ActivityPilotStatus *utils.Enum[int, string]
+type ActivityPilotState utils.EnumIntString
 
 var (
-	ActivityPilotStatusSigned    ActivityPilotStatus = utils.NewEnum(0, "报名")
-	ActivityPilotStatusClearance ActivityPilotStatus = utils.NewEnum(1, "放行")
-	ActivityPilotStatusTakeoff   ActivityPilotStatus = utils.NewEnum(2, "起飞")
-	ActivityPilotStatusLanding   ActivityPilotStatus = utils.NewEnum(3, "着陆")
+	ActivityPilotStateSigned    ActivityPilotState = utils.NewEnum(0, "报名")
+	ActivityPilotStateClearance ActivityPilotState = utils.NewEnum(1, "放行")
+	ActivityPilotStateTakeoff   ActivityPilotState = utils.NewEnum(2, "起飞")
+	ActivityPilotStateLanding   ActivityPilotState = utils.NewEnum(3, "着陆")
 )
 
-var ActivityPilotManager = utils.NewEnums(
-	ActivityPilotStatusSigned,
-	ActivityPilotStatusClearance,
-	ActivityPilotStatusTakeoff,
-	ActivityPilotStatusLanding,
+var ActivityPilotStates = utils.NewEnums(
+	ActivityPilotStateSigned,
+	ActivityPilotStateClearance,
+	ActivityPilotStateTakeoff,
+	ActivityPilotStateLanding,
 )

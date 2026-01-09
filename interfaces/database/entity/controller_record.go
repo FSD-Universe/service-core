@@ -35,7 +35,7 @@ func (c *ControllerRecord) SetId(id uint) {
 	c.ID = id
 }
 
-type ControllerRecordType *utils.Enum[int, string]
+type ControllerRecordType utils.EnumIntString
 
 var (
 	ControllerRecordInterview    ControllerRecordType = utils.NewEnum(0, "面试")

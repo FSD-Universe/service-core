@@ -16,6 +16,9 @@ func NewEnum[T comparable, V any](value T, data V) *Enum[T, V] {
 	return &Enum[T, V]{Value: value, Data: data}
 }
 
+type EnumIntString *Enum[int, string]
+type EnumStringString *Enum[string, string]
+
 // ManagerInterface 枚举管理器接口，定义了枚举管理的基本操作
 // T 是可比较的类型
 type ManagerInterface[T comparable, V any] interface {
@@ -51,5 +54,3 @@ func (manager *EnumManager[T, V]) GetEnum(value T) *Enum[T, V] {
 func (manager *EnumManager[T, V]) GetEnums() map[T]*Enum[T, V] {
 	return manager.enums
 }
-
-type EnumIntString = *Enum[int, string]
