@@ -23,7 +23,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.24'
+          go-version: '1.25.5'
 
       - name: Test
-        run: go test ./... -tags "database http httpjwt permission event_bus telemetry" --count=1
+        run: go test ./... -tags "database http httpjwt permission event_bus telemetry fsd" --count=1
